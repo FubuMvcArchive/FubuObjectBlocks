@@ -13,27 +13,32 @@ namespace FubuObjectBlocks.Tests
         public void reads_and_writes()
         {
             var solution = new Solution
-            {
-                Options = new SolutionOptions
                 {
-                    Name = new SolutionName("ripple"),
-                    Nuspecs = "packaging/nuget",
-                    SrcFolder = "src",
-                    BuildCmd = "rake",
-                    FastBuildCommand = "rake compile",
-                    Constraints = new SolutionConstraints
-                    {
-                        Float = "current",
-                        Fixed = "current,nextMajor"
-                    }
-                }
-            };
+                    Options = new SolutionOptions
+                        {
+                            Name = new SolutionName("ripple"),
+                            Nuspecs = "packaging/nuget",
+                            SrcFolder = "src",
+                            BuildCmd = "rake",
+                            FastBuildCommand = "rake compile",
+                            Constraints = new SolutionConstraints
+                                {
+                                    Float = "current",
+                                    Fixed = "current,nextMajor"
+                                }
+                        }
+                };
 
             solution.Feeds = new[]
-            {
-                new Feed { Url = "http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc", Mode = "float", Stability = "released"},
-                new Feed { Url = "http://nuget.org/api/v2", Mode = "fixed", Stability = "released"}
-            };
+                {
+                    new Feed
+                        {
+                            Url = "http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc",
+                            Mode = "float",
+                            Stability = "released"
+                        },
+                    new Feed {Url = "http://nuget.org/api/v2", Mode = "fixed", Stability = "released"}
+                };
 
             var serializer = ObjectBlockSerializer.Basic();
 
@@ -45,7 +50,6 @@ namespace FubuObjectBlocks.Tests
 
             newSolution.ShouldEqual(solution);
         }
-
         public class Solution
         {
             public SolutionOptions Options { get; set; }
@@ -103,7 +107,7 @@ namespace FubuObjectBlocks.Tests
                 if (ReferenceEquals(null, obj)) return false;
                 if (ReferenceEquals(this, obj)) return true;
                 if (obj.GetType() != this.GetType()) return false;
-                return Equals((SolutionName) obj);
+                return Equals((SolutionName)obj);
             }
 
             public override int GetHashCode()
@@ -116,6 +120,7 @@ namespace FubuObjectBlocks.Tests
         {
             [ImplicitValue]
             public SolutionName Name { get; set; }
+
             public string Nuspecs { get; set; }
             public string SrcFolder { get; set; }
             public string BuildCmd { get; set; }
@@ -125,7 +130,9 @@ namespace FubuObjectBlocks.Tests
 
             protected bool Equals(SolutionOptions other)
             {
-                return string.Equals(Name, other.Name) && string.Equals(Nuspecs, other.Nuspecs) && string.Equals(SrcFolder, other.SrcFolder) && string.Equals(BuildCmd, other.BuildCmd) && string.Equals(FastBuildCommand, other.FastBuildCommand) && Constraints.Equals(other.Constraints);
+                return string.Equals(Name, other.Name) && string.Equals(Nuspecs, other.Nuspecs) &&
+                       string.Equals(SrcFolder, other.SrcFolder) && string.Equals(BuildCmd, other.BuildCmd) &&
+                       string.Equals(FastBuildCommand, other.FastBuildCommand) && Constraints.Equals(other.Constraints);
             }
 
             public override bool Equals(object obj)
@@ -176,6 +183,7 @@ namespace FubuObjectBlocks.Tests
                     return (Float.GetHashCode() * 397) ^ Fixed.GetHashCode();
                 }
             }
+
         }
 
         public class Feed
@@ -186,7 +194,8 @@ namespace FubuObjectBlocks.Tests
 
             protected bool Equals(Feed other)
             {
-                return string.Equals(Url, other.Url) && string.Equals(Mode, other.Mode) && string.Equals(Stability, other.Stability);
+                return string.Equals(Url, other.Url) && string.Equals(Mode, other.Mode) &&
+                       string.Equals(Stability, other.Stability);
             }
 
             public override bool Equals(object obj)
@@ -209,4 +218,5 @@ namespace FubuObjectBlocks.Tests
             }
         }
     }
+
 }

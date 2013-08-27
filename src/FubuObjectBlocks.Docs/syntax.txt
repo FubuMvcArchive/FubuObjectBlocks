@@ -1,0 +1,19 @@
+﻿solution:
+  name 'ripple'
+  nuspecs 'packaging/nuget'
+  srcFolder 'src'
+  buildCmd 'rake'
+  fastBuildCommand 'rake compile'
+  constraints:
+    float 'current'
+    fixed 'current,nextMajor'
+ 
+feed 'http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc', mode: 'float', stability: 'released'
+feed 'http://nuget.org/api/v2', mode: 'fixed', stability: 'released'
+ 
+nuget 'FubuCore', version: '~>1.1.0'
+nuget 'NuGet.Core', version: '2.5.0', mode: 'fixed'
+nuget 'NUnit', version: '2.5.10.11092', mode: 'fixed'
+nuget 'RhinoMocks', version: '3.6.1', mode: 'fixed'
+nuget 'structuremap', version: '2.6.3', mode: 'fixed'
+nuget 'structuremap.automocking', version: '~>1.1.0', mode: 'fixed'

@@ -1,0 +1,7 @@
+<!--Title: Introduction-->
+
+<p>It started as an idea to move ripple off of XML and turned into something that might be handy in configuration scenarios. FubuObjectBlocks is just a VERY simple object notation used to express simple objects. The values are parsed and pushed through the model binding component in FubuCore so you get all of the conventional goodness and power we know and love.</p>
+
+<p>While useful for tools like ripple, FubuObjectBlocks could prove to be useful in AppSettingsProvider scenarios as well (when basic string property definitions just aren't enough).</p>
+
+

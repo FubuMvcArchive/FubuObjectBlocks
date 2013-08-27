@@ -8,7 +8,7 @@ FubuRake::Solution.new do |sln|
 				 
 	sln.assembly_info = {
 		:product_name => "FubuObjectBlocks",
-		:copyright => 'Copyright 2013. All rights reserved.'
+		:copyright => 'Copyright Joshua Arnold, Jeremy D. Miller 2013. All rights reserved.'
 	}
 	
 	sln.ripple_enabled = true

@@ -1,0 +1,31 @@
+<!--Title: Syntax-->
+
+<Section title="Sample" id="sample">
+    <p>Let's begin with a sample block:</p>
+</Section>
+
+<EmbedFile name="syntax.txt" />
+
+<Section title="Blocks" id="blocks">
+    <p>The entire file represents a single "Object Block" - your target type. Blocks can hold collections, simple properties, and nested types.</p>
+</Section>
+
+<Section title="Nesting" id="nesting">
+    <p>In our sample block, we have a "solution" property defined. Nested properties *must* be suffixed with ":" to denote the start of a new block on the following lines.</p>
+    <p>There is not limit to the number of nested types you define.</p>
+</Section>
+
+<Section title="Properties" id="properties">
+    <p>Properties can be defined for any block. Property definitions are expressed as:</p>
+    <blockquote>propertyName 'value'</blockquote>
+    <blockquote>Note: The single quotes are used regardless of the data type</blockquote>
+</Section>
+
+<Section title="Collections" id="collections">
+    <p>Collections are expressed using the "inline" block syntax:</p>
+    <blockquote>propertyName 'implicit value'[, additionalProperty: 'value' ...]</blockquote>
+    <p>Unless configured otherwise, propertyName refers to the name of your collection. The "implicit value" can be defined for your objects
+    and represents the default property of your object. In this example, the Url property is the implicit value of the Feed object.</p>
+    <p>Additional properties can be defined using this syntax but must be suffixed with ":".</p>
+    <p>We'll look at how to configure this for your code in the next section.</p>
+</Section>

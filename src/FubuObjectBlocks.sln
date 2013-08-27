@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubuObjectBlocks", "FubuObj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubuObjectBlocks.Tests", "FubuObjectBlocks.Tests\FubuObjectBlocks.Tests.csproj", "{8F5D6345-8DCF-46E5-8793-3465F24AFF81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubuObjectBlocks.Docs", "FubuObjectBlocks.Docs\FubuObjectBlocks.Docs.csproj", "{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,12 @@ Global
 		{8F5D6345-8DCF-46E5-8793-3465F24AFF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F5D6345-8DCF-46E5-8793-3465F24AFF81}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8F5D6345-8DCF-46E5-8793-3465F24AFF81}.Release|x86.ActiveCfg = Release|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6B03061-68CD-4AFD-875C-1BDCE5C3437C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

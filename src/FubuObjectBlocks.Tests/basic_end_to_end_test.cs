@@ -81,7 +81,7 @@ namespace FubuObjectBlocks.Tests
         public IEnumerable<NestedItem> Items { get; set; }
 
         [BlockSettings(ExpressAs = "feed", ImplicitProperty = "url")]
-        public IEnumerable<Feed> Feeds { get; set; } 
+        public IEnumerable<FeedObject> Feeds { get; set; } 
     }
 
     public class NestedTarget
@@ -95,7 +95,7 @@ namespace FubuObjectBlocks.Tests
         public string Property { get; set; }
     }
 
-    public class Feed
+    public class FeedObject
     {
         public string Url { get; set; }
         public string Mode { get; set; }

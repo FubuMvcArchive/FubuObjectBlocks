@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ProjectRoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <TagLine>Conventional object notation</TagLine>
+  <Name>FubuObjectBlocks</Name>
+  <GitHubPage>https://github.com/DarthFubuMVC/FubuObjectBlocks</GitHubPage>
+  <UserGroupUrl>https://groups.google.com/forum/?fromgroups#!forum/fubumvc-devel</UserGroupUrl>
+  <BuildServerUrl>http://build.fubu-project.org/project.html?projectId=project4&amp;tab=projectOverview</BuildServerUrl>
+  <BottleName>FubuObjectBlocks.Docs</BottleName>
+  <NugetWhitelist>FubuObjectBlocks</NugetWhitelist>
+  <Nugets>
+    <PublishedNuget>
+      <Name>FubuObjectBlocks</Name>
+      <Description>Simple object notation compatible with FubuCore's powerful model binding component</Description>
+    </PublishedNuget>
+  </Nugets>
+  <Url>fubuobjectblocks</Url>
+</ProjectRoot>

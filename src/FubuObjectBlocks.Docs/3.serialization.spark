@@ -1,0 +1,27 @@
+<!--Title: Serialization -->
+
+<Section title="Sample Class" id="class">
+    <p>Let's briefly look at the class represented by the sample syntax in the previous section:</p>
+</Section>
+
+<Snippet name="Solution" />
+
+<p>See that weird looking attribute? Don't worry, there's a better way. That's just a one-off usage as an example.</p>
+
+<Section title="Deserialization" id="deserialization">
+    <p>Using the sample file from the previous section, let's deserialize that into our Solution class:</p>
+</Section>
+
+<Snippet name="Deserialize" />
+
+<Section title="Serialization" id="deserialization">
+    <p>Now we'll go from a Solution instance back down to a string:</p>
+</Section>
+
+<Snippet name="Serialize" />
+
+<Section title="Serialization" id="deserialization">
+    <p>Here's a sample of how to avoid the attribute(s):</p>
+</Section>
+
+<Snippet name="SerializeSettings" />
