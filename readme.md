@@ -8,27 +8,8 @@ While useful for tools like ripple, FubuObjectBlocks might prove to be useful in
 
 ### Example syntax:
 
-solution:
-  name 'ripple'
-  nuspecs 'packaging/nuget'
-  srcFolder 'src'
-  buildCmd 'rake'
-  fastBuildCommand 'rake compile'
-  constraints:
-    float 'current'
-    fixed 'current,nextMajor'
- 
-feed '...some long url', mode: 'float', stability: 'released'
-feed 'http://nuget.org/api/v2', mode: 'fixed', stability: 'released'
- 
-nuget 'FubuCore', version: '~>1.1.0'
-nuget 'NuGet.Core', version: '2.5.0', mode: 'fixed'
-nuget 'NUnit', version: '2.5.10.11092', mode: 'fixed'
-nuget 'RhinoMocks', version: '3.6.1', mode: 'fixed'
-nuget 'structuremap', version: '2.6.3', mode: 'fixed'
-nuget 'structuremap.automocking', version: '~>1.1.0', mode: 'fixed'
-
---
+Since I can't seem to figure out how to format it here, here's the link to the gist:
+https://gist.github.com/jmarnold/6342496
 
 A few things to note:
 
