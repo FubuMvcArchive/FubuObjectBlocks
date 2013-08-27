@@ -8,7 +8,6 @@ While useful for tools like ripple, FubuObjectBlocks might prove to be useful in
 
 ### Example syntax:
 
-<code>
 solution:
   name 'ripple'
   nuspecs 'packaging/nuget'
@@ -19,7 +18,7 @@ solution:
     float 'current'
     fixed 'current,nextMajor'
  
-feed 'http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc', mode: 'float', stability: 'released'
+feed '...some long url', mode: 'float', stability: 'released'
 feed 'http://nuget.org/api/v2', mode: 'fixed', stability: 'released'
  
 nuget 'FubuCore', version: '~>1.1.0'
@@ -28,7 +27,8 @@ nuget 'NUnit', version: '2.5.10.11092', mode: 'fixed'
 nuget 'RhinoMocks', version: '3.6.1', mode: 'fixed'
 nuget 'structuremap', version: '2.6.3', mode: 'fixed'
 nuget 'structuremap.automocking', version: '~>1.1.0', mode: 'fixed'
-</code>
+
+--
 
 A few things to note:
 
