@@ -121,13 +121,13 @@ namespace FubuObjectBlocks
 
                         if (target.Has(token))
                         {
-                            var property = target.FindProperty(token);
+                            var property = target.FindBlock(token);
                             property.AddBlock(block);
                         }
                         else
                         {
                             var property = new PropertyBlock(token) { Block = block };
-                            target.AddProperty(property);
+                            target.AddBlock(property);
                         }
                         
                         

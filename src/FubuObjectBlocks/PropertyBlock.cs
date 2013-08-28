@@ -1,71 +1,60 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FubuCore;
 
 namespace FubuObjectBlocks
 {
-    public class PropertyBlock
+    public class CollectionItemBlock : IBlock
     {
-        private readonly IList<ObjectBlock> _blocks = new List<ObjectBlock>();
+        private readonly IList<PropertyBlock> _blocks = new List<PropertyBlock>();
 
-        public PropertyBlock()
-        {
-        }
-
-        public PropertyBlock(string name)
+        public CollectionItemBlock(string name)
         {
             Name = name;
         }
 
         public string Name { get; set; }
+        public IEnumerable<PropertyBlock> Blocks { get { return _blocks; } }
 
-        public ObjectBlock Block
-        {
-            get { return _blocks.First(); }
-            set
-            {
-                _blocks.Clear();
-                _blocks.Add(value);
-            }
-        }
-        
         public void Clear()
         {
             _blocks.Clear();
         }
 
-        public IEnumerable<ObjectBlock> Blocks { get { return _blocks; } }
-
-        public void AddBlock(ObjectBlock block)
+        public void AddBlock(PropertyBlock block)
         {
             _blocks.Add(block);
         }
 
-        protected bool Equals(PropertyBlock other)
+        public override string ToString()
         {
-            return string.Equals(Name, other.Name);
+            return ToString(0);
         }
 
-        public override bool Equals(object obj)
+        public string ToString(int indent = 0)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((PropertyBlock) obj);
+            return "";
+        }
+    }
+
+    public class PropertyBlock : IBlock
+    {
+        public PropertyBlock(string name, string value)
+        {
+            Name = name;
         }
 
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
+        public string Name { get; set; }
+        public string Value { get; set; }
 
         public override string ToString()
         {
-            return Name;
+            return ToString(0);
         }
 
-        public static PropertyBlock ForValue(string name, string value)
+        public string ToString(int indent)
         {
-            return new PropertyBlock(name) { Block = new ObjectBlock { Value = value }};
+            return BlockIndenter.Indent("{0}: '{1}'".ToFormat(Name, Value), indent);
         }
     }
 }
