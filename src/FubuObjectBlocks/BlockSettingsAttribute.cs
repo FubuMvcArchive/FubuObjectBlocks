@@ -22,7 +22,7 @@ namespace FubuObjectBlocks
 
         public CollectionConfiguration ToConfiguration(Type type, PropertyInfo property)
         {
-            if (!property.PropertyType.Closes(typeof (IEnumerable<>)))
+            if (!property.PropertyType.IsGenericEnumerable())
             {
                 throw new InvalidOperationException("BlockSettingsAttribute is only valid for generic collections");
             }

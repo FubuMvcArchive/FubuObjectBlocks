@@ -1,33 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FubuCore;
 
 namespace FubuObjectBlocks
 {
-    public interface IBlock
-    {
-        string ToString(int indent = 0);
-        string Name { get; }
-    }
-
     public class ObjectBlock : IBlock
     {
-        private readonly IList<IBlock> _blocks = new List<IBlock>();
+        private IList<IBlock> _blocks = new List<IBlock>();
 
-        public IEnumerable<IBlock> Blocks { get { return _blocks; } }
+        public IList<IBlock> Blocks
+        {
+            get { return _blocks; }
+            set { _blocks = value; }
+        }
 
         public ObjectBlock()
         {
         }
 
+        //TODO: make sure this gets set
         public ObjectBlock(string name)
         {
             Name = name;
         }
 
         public string Name { get; set; }
+
+        public string Value { get; set; }
 
         public void AddBlock(IBlock block)
         {
@@ -44,84 +44,35 @@ namespace FubuObjectBlocks
             return _blocks.SingleOrDefault(x => x.Name.EqualsIgnoreCase(name));
         }
 
-        //use tostring instead
-        public string Write()
+        public TBlock FindBlock<TBlock>(string name) where TBlock : IBlock
         {
-            return ToString();
+            return _blocks.OfType<TBlock>().SingleOrDefault(x => x.Name.EqualsIgnoreCase(name));
         }
 
-        //        private static void write(ObjectBlock block, StringBuilder builder, int depth = 0, int indent = 0)
-//        {
-//            block.Properties.Each(property =>
-//            {
-//                if (property.Block.Value.IsNotEmpty())
-//                {
-//                    var indentation = "";
-//                    //NOTE: all unit tests passing with this commented out, seems its not needed?
-//                    //when depth is 0 so is indent
-//                    if (depth != 0)
-//                    {
-//                        for (var i = 0; i < indent * 2; i++)
-//                        {
-//                            indentation += " ";
-//                        }
-//                    }
-//
-//                    if (property.Blocks.Count() > 1)
-//                    {
-//                        property.Blocks.Each(x =>
-//                        {
-//                            builder.AppendLine();
-//                            builder.Append("{0}{1} '{2}'".ToFormat(indentation, property.Name, x.Value));
-//                            x.Properties.Each(p =>
-//                            {
-//                                builder.Append(", ");
-//                                builder.Append("{0}: '{1}'".ToFormat(p.Name, p.Block.Value));
-//                            });
-//                        });
-//                    }
-//                    else {builder.Append("{0}{1} '{2}'".ToFormat(indentation, property.Name, property.Block.Value));}
-//
-//
-//                    builder.AppendLine();
-//                }
-//                else
-//                {
-//                    var indentation = "";
-//                    for (var i = 0; i < indent * 2; i++)
-//                    {
-//                        indentation += " ";
-//                    }
-//
-//                    builder.AppendLine("{0}{1}:".ToFormat(indentation, property.Name));
-//                    write(property.Block, builder, depth + 1, indent + 1);
-//                }
-//            });
-//        }
+        public PropertyBlock FindProperty(string name)
+        {
+            return FindBlock<PropertyBlock>(name);
+        }
+
+        public ObjectBlock FindNested(string name)
+        {
+            return FindBlock<ObjectBlock>(name);
+        }
+
+        public string OneLineSummary(int indent = 0)
+        {
+            var nameAndValue = "{0} '{1}'".ToFormat(Name, Value);
+            var content = new[] {nameAndValue}
+                .Concat(Blocks.OfType<PropertyBlock>().Select(p => p.ToString()))
+                .Join(", ");
+            return "{0}{1}".ToFormat(BlockIndenter.Indent(content, indent), Environment.NewLine);
+        }
 
         public string ToString(int indent = 0)
         {
             return new[] { BlockIndenter.Indent("{0}:".ToFormat(Name), indent) }
-                .Concat(Blocks.Select(x => x.ToString(indent)))
+                .Concat(Blocks.Select(x => x.ToString(indent + 1)))
                 .Join(Environment.NewLine);
         }
     }
-
-    public static class BlockIndenter
-    {
-        public static int IndentSize;
-
-        public static string Repeat(int size, string content)
-        {
-            return Enumerable.Range(0, size).Select(x => content).Join(string.Empty);
-        }
-
-        public static string Indent(string content, int indent = 0)
-        {
-            var indentString = Repeat(indent, Repeat(IndentSize, " "));
-            return "{0}{1}".ToFormat(indentString, content);
-        }
-    }
-
-
 }

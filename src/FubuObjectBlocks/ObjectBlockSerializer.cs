@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Linq;
 using FubuCore;
 using FubuCore.Binding;
 using FubuCore.Formatting;
@@ -49,82 +50,66 @@ namespace FubuObjectBlocks
 
         public string Serialize(object input, IObjectBlockSettings settings)
         {
-            var block = BlockFor(input, settings);
-            return block.Write();
+            return BlockFor(input, settings).ToString();
         }
 
         public ObjectBlock BlockFor(object input, IObjectBlockSettings settings)
         {
-            var root = new ObjectBlock();
-
-            fillBlock(root, input, settings);
-
-            return root;
+            return MakeBlock(input, settings);
         }
 
-        private void fillBlock(ObjectBlock block, object input, IObjectBlockSettings settings)
+        private ObjectBlock MakeBlock(object input, IObjectBlockSettings settings)
         {
             var type = input.GetType();
-            var implicitValue = settings.FindImplicitValue(type, block);
+            var implicitValue = settings.FindImplicitValue(type);
+            var displayValue = implicitValue != null
+                ? _displayFormatter.GetDisplayForValue(implicitValue, implicitValue.GetValue(input))
+                : null;
 
-            _cache.ForEachProperty(type, property =>
+            return new ObjectBlock
             {
-                if (implicitValue != null && implicitValue.Equals(new SingleProperty(property)))
-                {
-                    return;
-                }
-
-                var valueBlock = new ObjectBlock();
-                var propBlock = new PropertyBlock(toBlockPropertyName(property.Name)) { Block = valueBlock };
-
-                if (property.PropertyType.IsSimple() || property.HasAttribute<ImplicitValueAttribute>())
-                {
-                    var rawValue = property.GetValue(input, null);
-                    valueBlock.Value = _displayFormatter.GetDisplayForValue(new SingleProperty(property), rawValue);
-                }
-                else if (property.PropertyType.IsGenericEnumerable())
-                {
-                    var values = property.GetValue(input, null) as IEnumerable;
-                    if (values != null)
+                Blocks = _cache.GetPropertiesFor(type)
+                    .Values
+                    .Where(x => implicitValue == null || !implicitValue.Equals(new SingleProperty(x)))
+                    .Select(x =>
                     {
-                        propBlock.Clear();
-                        propBlock.Name = settings.Collection(type, propBlock.Name);
-                        foreach (var value in values)
+                        var name = x.Name.FirstLetterLowercase();
+
+                        if (x.PropertyType.IsSimple() || x.HasAttribute<ImplicitValueAttribute>())
                         {
-                            var childBlock = new ObjectBlock();
-                            fillBlock(childBlock, value, settings);
-
-                            propBlock.AddBlock(childBlock);
+                            var rawValue = x.GetValue(input, null);
+                            var value = _displayFormatter.GetDisplayForValue(new SingleProperty(x), rawValue);
+                            return new PropertyBlock(name)
+                            {
+                                Value = value
+                            };
                         }
-                    }
-                }
-                else
-                {
-                    var child = property.GetValue(input, null);
-                    fillBlock(valueBlock, child, settings);
-                }
 
-                block.AddProperty(propBlock);
-            });
+                        if (x.PropertyType.IsGenericEnumerable())
+                        {
+                            var collectionName = settings.Collection(type, name);
+                            return new CollectionItemBlock(name)
+                            {
+                                Name = collectionName,
+                                Blocks = (x.GetValue(input, null) as IEnumerable)
+                                    .Cast<object>()
+                                    .Select(value => MakeBlock(value, settings))
+                                    .ToList()
+                            };
+                        }
 
-            
-            if (implicitValue != null)
-            {
-                var value = implicitValue.GetValue(input);
-                block.Value = _displayFormatter.GetDisplayForValue(implicitValue, value);
-            }
-        }
-
-        private static string toBlockPropertyName(string name)
-        {
-            return name.Substring(0, 1).ToLower() + name.Substring(1);
+                        var child = x.GetValue(input, null);
+                        return (IBlock) MakeBlock(child, settings);
+                    }).ToList(),
+                Value = displayValue
+            };
         }
 
         public static ObjectBlockSerializer Basic()
         {
             var cache = new TypeDescriptorCache();
             var formatter = new DisplayFormatter(new InMemoryServiceLocator(), new Stringifier());
-            return new ObjectBlockSerializer(new ObjectBlockParser(), ObjectResolver.Basic(), cache, formatter);
+            return new ObjectBlockSerializer(new MonadicBlockParser(), ObjectResolver.Basic(), cache, formatter);
         }
     }
 }

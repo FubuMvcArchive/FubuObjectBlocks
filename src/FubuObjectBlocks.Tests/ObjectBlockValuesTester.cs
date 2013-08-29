@@ -23,7 +23,7 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void has_key()
         {
-            theBlock.AddProperty(new PropertyBlock("test"));
+            theBlock.AddBlock(new PropertyBlock("test"));
             theValues.Has("test").ShouldBeTrue();
         }
 
@@ -36,16 +36,16 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void gets_property_values()
         {
-            theBlock.AddProperty(new PropertyBlock("test") { Block = new ObjectBlock { Value = "1234" }});
+            theBlock.AddBlock(new PropertyBlock("test") {Value = "1234"});
             theValues.Get("test").ShouldEqual("1234");
         }
 
         [Test]
         public void has_child()
         {
-            var property = new PropertyBlock("test") {Block = new ObjectBlock()};
-            property.Block.AddProperty(new PropertyBlock("sub-property"));
-            theBlock.AddProperty(property);
+            var child = new ObjectBlock("test");
+            child.AddBlock(new PropertyBlock("sub-property"));
+            theBlock.AddBlock(child);
 
             theValues.HasChild("test").ShouldBeTrue();
         }
@@ -53,8 +53,8 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void has_child_negative_no_properties()
         {
-            var property = new PropertyBlock("test") { Block = new ObjectBlock() };
-            theBlock.AddProperty(property);
+            var property = new PropertyBlock("test");
+            theBlock.AddBlock(property);
 
             theValues.HasChild("test").ShouldBeFalse();
         }
@@ -68,9 +68,9 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void get_child_for_existing_values()
         {
-            var property = new PropertyBlock("test") { Block = new ObjectBlock() };
-            property.Block.AddProperty(new PropertyBlock("sub-property"));
-            theBlock.AddProperty(property);
+            var child = new ObjectBlock("test");
+            child.AddBlock(new PropertyBlock("sub-property"));
+            theBlock.AddBlock(child);
 
             theValues.GetChild("test").Has("sub-property").ShouldBeTrue();
         }
@@ -85,15 +85,15 @@ namespace FubuObjectBlocks.Tests
         public void get_children_for_existing_values()
         {
             var block1 = new ObjectBlock();
-            block1.AddProperty(new PropertyBlock("Url") { Block = new ObjectBlock { Value = "url1"}});
+            block1.AddBlock(new PropertyBlock("Url") { Value = "url1" });
 
             var block2 = new ObjectBlock();
-            block2.AddProperty(new PropertyBlock("Url") { Block = new ObjectBlock { Value = "url2" } });
+            block2.AddBlock(new PropertyBlock("Url") { Value = "url2" });
 
-            var property = new PropertyBlock("feeds");
-            property.AddBlock(block1);
-            property.AddBlock(block2);
-            theBlock.AddProperty(property);
+            var collection = new CollectionItemBlock("feeds");
+            collection.AddBlock(block1);
+            collection.AddBlock(block2);
+            theBlock.AddBlock(collection);
 
             var values = theValues.GetChildren("Feeds").ToArray();
 
@@ -105,15 +105,15 @@ namespace FubuObjectBlocks.Tests
         public void get_mapped_children_for_existing_values()
         {
             var block1 = new ObjectBlock();
-            block1.AddProperty(new PropertyBlock("Url") { Block = new ObjectBlock { Value = "url1" } });
+            block1.AddBlock(new PropertyBlock("Url") { Value = "url1" });
 
             var block2 = new ObjectBlock();
-            block2.AddProperty(new PropertyBlock("Url") { Block = new ObjectBlock { Value = "url2" } });
+            block2.AddBlock(new PropertyBlock("Url") { Value = "url2" });
 
-            var property = new PropertyBlock("feed");
-            property.AddBlock(block1);
-            property.AddBlock(block2);
-            theBlock.AddProperty(property);
+            var collection = new CollectionItemBlock("feed");
+            collection.AddBlock(block1);
+            collection.AddBlock(block2);
+            theBlock.AddBlock(collection);
 
             var mappedValueSource = new ObjectBlockValues<Solution>(theBlock, new FeedObjectSettings());
 
@@ -126,12 +126,11 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void get_implicit_value()
         {
-            var property = new PropertyBlock("feed");
-            property.Block = new ObjectBlock { Value = "http://www.google.com" };
+            var property = new PropertyBlock("feed") { Value = "http://www.google.com" };
 
-            theBlock.AddProperty(property);
+            theBlock.AddBlock(property);
 
-            var mappedValueSource = new ObjectBlockValues<FeedObject>(property.Block, new FeedObjectSettings());
+            var mappedValueSource = new ObjectBlockValues<FeedObject>(theBlock, new FeedObjectSettings());
 
             var value = "";
             mappedValueSource.Value("Url", x =>
@@ -159,12 +158,12 @@ namespace FubuObjectBlocks.Tests
                 return "feed";
             }
 
-            public Accessor ImplicitValue(Type type, ObjectBlock block, string key)
+            public Accessor ImplicitValue(Type type, string key)
             {
                 return ReflectionHelper.GetAccessor<FeedObject>(x => x.Url);
             }
 
-            public Accessor FindImplicitValue(Type type, ObjectBlock block)
+            public Accessor FindImplicitValue(Type type)
             {
                 throw new NotImplementedException();
             }

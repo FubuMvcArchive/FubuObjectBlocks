@@ -12,15 +12,14 @@ namespace FubuObjectBlocks.Tests
         public void writes_the_values()
         {
             var block = new ObjectBlock();
-            block.AddProperty(new PropertyBlock("prop1") { Block = new ObjectBlock { Value = "val1" } });
+            block.AddBlock(new PropertyBlock("prop1") { Value = "val1" } );
             
-
             var nested = new ObjectBlock();
-            block.AddProperty(new PropertyBlock("nestedProperty") { Block = nested });
+            nested.AddBlock(new PropertyBlock("nestedProp1") { Value = "val2" } );
 
-            nested.AddProperty(new PropertyBlock("nestedProp1") { Block = new ObjectBlock { Value = "val2" } });
+            block.AddBlock(nested);
 
-            block.Write().ShouldEqual("prop1 'val1'{0}nestedProperty:{0}  nestedProp1 'val2'{0}".ToFormat(Environment.NewLine));
+            block.ToString().ShouldEqual("prop1 'val1'{0}nestedProperty:{0}  nestedProp1 'val2'{0}".ToFormat(Environment.NewLine));
         }
     }
 }

@@ -24,15 +24,15 @@ namespace FubuObjectBlocks.Tests
             var serializer = ObjectBlockSerializer.Basic();
             var block = serializer.BlockFor(target, new ObjectBlockSettings());
 
-            block.FindProperty("name").Block.Value.ShouldEqual("test");
+            block.FindBlock<PropertyBlock>("name").Value.ShouldEqual("test");
 
-            var feeds = block.FindProperty("feed").Blocks.ToArray();
+            var feeds = block.FindBlock<CollectionItemBlock>("feed").Blocks.ToArray();
             
             feeds[0].Value.ShouldEqual("http://localhost:8080");
-            feeds[0].FindProperty("mode").Block.Value.ShouldEqual("fixed");
+            feeds[0].FindBlock<PropertyBlock>("mode").Value.ShouldEqual("fixed");
 
             feeds[1].Value.ShouldEqual("http://localhost:8181");
-            feeds[1].FindProperty("mode").Block.Value.ShouldEqual("float");
+            feeds[1].FindBlock<PropertyBlock>("mode").Value.ShouldEqual("float");
         }
 
         public class SuperComplexTarget

@@ -43,8 +43,11 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockIndenter.cs" />
     <Compile Include="BlockSettingsAttribute.cs" />
     <Compile Include="CollectionConfiguration.cs" />
+    <Compile Include="CollectionItemBlock.cs" />
+    <Compile Include="IBlock.cs" />
     <Compile Include="ImplicitValueAttribute.cs" />
     <Compile Include="IObjectBlockParser.cs" />
     <Compile Include="IObjectBlockSerializer.cs" />

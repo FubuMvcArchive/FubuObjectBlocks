@@ -7,8 +7,8 @@ namespace FubuObjectBlocks
     {
         string Collection(Type type, string key);
         
-        Accessor ImplicitValue(Type type, ObjectBlock block, string key);
-        Accessor FindImplicitValue(Type type, ObjectBlock block);
+        Accessor ImplicitValue(Type type, string key);
+        Accessor FindImplicitValue(Type type);
 
         Type FindCollectionType(Type type, string key);
     }

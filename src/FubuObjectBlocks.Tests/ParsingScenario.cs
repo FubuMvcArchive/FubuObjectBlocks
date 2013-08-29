@@ -12,7 +12,7 @@ namespace FubuObjectBlocks.Tests
     {
         private readonly string _fileName;
         private readonly IFileSystem _files;
-        private readonly ObjectBlockParser _parser;
+        private readonly IObjectBlockParser _parser;
         private readonly ObjectBlockSerializer _serializer;
 
         public ParsingScenario(string fileName)
@@ -20,7 +20,7 @@ namespace FubuObjectBlocks.Tests
             _fileName = fileName;
             _files = new FileSystem();
 
-            _parser = new ObjectBlockParser();
+            _parser = new MonadicBlockParser();
 
             var formatter = new DisplayFormatter(new InMemoryServiceLocator(), new Stringifier());
             _serializer = new ObjectBlockSerializer(_parser, ObjectResolver.Basic(), new TypeDescriptorCache(), formatter);
