@@ -18,7 +18,7 @@ namespace FubuObjectBlocks.Tests
                 scenario.WriteLine("blockProperty:");
                 scenario.WriteLine("  property1 'string value'");
                 scenario.WriteLine("  property2 'another string value'");
-                scenario.WriteLine("  nestedProperty:");
+                scenario.WriteLine("  nestedObject:");
                 scenario.WriteLine("    nestedProperty1 '1'");
                 scenario.WriteLine("    nestedProperty2 '2'");
             });
@@ -30,33 +30,28 @@ namespace FubuObjectBlocks.Tests
             theScenario.Dispose();
         }
 
-        private ObjectBlock theBlock { get { return theScenario.Read(); } }
+        private ObjectBlock theBlock { get { return theScenario.Read().Blocks.Single() as ObjectBlock; } }
 
         [Test]
-        public void reads_the_block_property()
+        public void reads_the_object_block()
         {
-            var property = theBlock.Properties.Single();
-            property.Name.ShouldEqual("blockProperty");
-            property.Block.ShouldBeOfType<ObjectBlock>();
+            var block = theBlock;
+            block.Name.ShouldEqual("blockProperty");
         }
 
         [Test]
-        public void reads_the_nested_property()
+        public void reads_the_nested_object_block()
         {
-            var block = theBlock
-                .Properties
-                .Single().Block.As<ObjectBlock>();
+            var nestedObject = theBlock.GetBlocks<ObjectBlock>().Single();
+            nestedObject.Name.ShouldEqual("nestedObject");
 
-            var nestedProperty = block.Properties.ToArray()[2];
-            nestedProperty.Name.ShouldEqual("nestedProperty");
+            var nestedProperties = nestedObject.GetBlocks<PropertyBlock>().ToArray();
 
-            var properties = nestedProperty.Block.Properties.ToArray();
+            nestedProperties[0].Name.ShouldEqual("nestedProperty1");
+            nestedProperties[0].Value.ShouldEqual("1");
 
-            properties[0].Name.ShouldEqual("nestedProperty1");
-            properties[0].Block.Value.ShouldEqual("1");
-
-            properties[1].Name.ShouldEqual("nestedProperty2");
-            properties[1].Block.Value.ShouldEqual("2");
+            nestedProperties[1].Name.ShouldEqual("nestedProperty2");
+            nestedProperties[1].Value.ShouldEqual("2");
         }
     }
 }

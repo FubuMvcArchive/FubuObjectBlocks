@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using FubuTestingSupport;
 using NUnit.Framework;
 
@@ -33,59 +34,59 @@ namespace FubuObjectBlocks.Tests
             theScenario.Dispose();
         }
 
-        private ObjectBlock theBlock { get { return theScenario.Read(); } }
-        private PropertyBlock[] theProperties { get { return theBlock.Properties.ToArray(); } }
-        private PropertyBlock theInlineProperty
+        private IEnumerable<IBlock> theBlocks { get { return theScenario.Read().Blocks; } }
+
+        private ObjectBlock theInlineNestedObject
         {
-            get { return theProperties[2]; }
+            get { return theBlocks.Skip(2).First() as ObjectBlock; }
         }
 
         [Test]
         public void reads_the_first_immediate_property()
         {
-            var property = theProperties[0];
+            var property = theBlocks.First() as PropertyBlock;
             property.Name.ShouldEqual("test1");
-            property.Block.Value.ShouldEqual("immediate value");
+            property.Value.ShouldEqual("immediate value");
         }
 
         [Test]
-        public void reads_the_nested_property()
+        public void reads_the_nested_object_property()
         {
-            var property = theProperties[1];
-            property.Name.ShouldEqual("nestedType");
+            var nestedObject = theBlocks.Skip(1).First() as ObjectBlock;
+            nestedObject.Name.ShouldEqual("nestedType");
 
-            var properties = property.Block.Properties.ToArray();
+            var properties = nestedObject.GetBlocks<PropertyBlock>().ToArray();
 
             properties[0].Name.ShouldEqual("nestedProperty");
-            properties[0].Block.Value.ShouldEqual("string value");
+            properties[0].Value.ShouldEqual("string value");
         }
 
         [Test]
         public void reads_the_last_immediate_property()
         {
-            var property = theProperties[3];
+            var property = theBlocks.Skip(3).First() as PropertyBlock;
             property.Name.ShouldEqual("test2");
-            property.Block.Value.ShouldEqual("another value");
+            property.Value.ShouldEqual("another value");
         }
 
         [Test]
         public void reads_the_property_name_and_value()
         {
-            var property = theInlineProperty;
-            property.Name.ShouldEqual("feed");
-            property.Block.Value.ShouldEqual("some url");
+            var inlineNested = theInlineNestedObject;
+            inlineNested.Name.ShouldEqual("feed");
+            inlineNested.Value.ShouldEqual("some url");
         }
 
         [Test]
         public void reads_the_nested_properties()
         {
-            var properties = theInlineProperty.Block.Properties.ToArray();
+            var properties = theInlineNestedObject.GetBlocks<PropertyBlock>().ToArray();
 
             properties[0].Name.ShouldEqual("mode");
-            properties[0].Block.Value.ShouldEqual("float");
+            properties[0].Value.ShouldEqual("float");
 
             properties[1].Name.ShouldEqual("stability");
-            properties[1].Block.Value.ShouldEqual("released");
+            properties[1].Value.ShouldEqual("released");
         }
     }
 }

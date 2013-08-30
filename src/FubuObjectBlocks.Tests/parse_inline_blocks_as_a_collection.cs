@@ -25,32 +25,32 @@ namespace FubuObjectBlocks.Tests
             theScenario.Dispose();
         }
 
-        private PropertyBlock theProperty
+
+        private CollectionItemBlock theCollection
         {
             get
             {
                 var root = theScenario.Read();
-                return root.Properties.Single();
+                return root.Blocks.OfType<CollectionItemBlock>().Single();
             }
         }
 
         [Test]
         public void reads_the_property_name()
         {
-            var property = theProperty;
-            property.Name.ShouldEqual("feed");
+            theCollection.Name.ShouldEqual("feed");
         }
 
         [Test]
         public void reads_the_multiple_values()
         {
-            var values = theProperty.Blocks.ToArray();
+            var collectionItems = theCollection.Blocks.ToArray();
 
-            values[0].Value.ShouldEqual("url1");
-            values[0].FindProperty("mode").Block.Value.ShouldEqual("fixed");
+            collectionItems[0].Value.ShouldEqual("url1");
+            collectionItems[0].FindProperty("mode").Value.ShouldEqual("fixed");
 
-            values[1].Value.ShouldEqual("url2");
-            values[1].FindProperty("mode").Block.Value.ShouldEqual("float");
+            collectionItems[1].Value.ShouldEqual("url2");
+            collectionItems[1].FindProperty("mode").Value.ShouldEqual("float");
         }
     }
 }

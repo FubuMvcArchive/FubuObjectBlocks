@@ -24,33 +24,33 @@ namespace FubuObjectBlocks.Tests
             theScenario.Dispose();
         }
 
-        private PropertyBlock theProperty
+        private ObjectBlock theObject
         {
             get
             {
                 var root = theScenario.Read();
-                return root.Properties.Single();
+                return root.Blocks.OfType<ObjectBlock>().Single();
             }
         }
 
         [Test]
-        public void reads_the_property_name_and_value()
+        public void reads_the_object_name_and_implicit_value()
         {
-            var property = theProperty;
-            property.Name.ShouldEqual("feed");
-            property.Block.Value.ShouldEqual("some url");
+            var block = theObject;
+            block.Name.ShouldEqual("feed");
+            block.Value.ShouldEqual("some url");
         }
 
         [Test]
         public void reads_the_nested_properties()
         {
-            var properties = theProperty.Block.Properties.ToArray();
+            var properties = theObject.GetBlocks<PropertyBlock>().ToArray();
 
             properties[0].Name.ShouldEqual("mode");
-            properties[0].Block.Value.ShouldEqual("float");
+            properties[0].Value.ShouldEqual("float");
 
             properties[1].Name.ShouldEqual("stability");
-            properties[1].Block.Value.ShouldEqual("released");
+            properties[1].Value.ShouldEqual("released");
         }
     }
 }

@@ -19,7 +19,6 @@ namespace FubuObjectBlocks
         {
         }
 
-        //TODO: make sure this gets set
         public ObjectBlock(string name)
         {
             Name = name;
@@ -46,7 +45,12 @@ namespace FubuObjectBlocks
 
         public TBlock FindBlock<TBlock>(string name) where TBlock : IBlock
         {
-            return _blocks.OfType<TBlock>().SingleOrDefault(x => x.Name.EqualsIgnoreCase(name));
+            return GetBlocks<TBlock>().SingleOrDefault(x => x.Name.EqualsIgnoreCase(name));
+        }
+
+        public IEnumerable<TBlock> GetBlocks<TBlock>()
+        {
+            return _blocks.OfType<TBlock>();
         }
 
         public PropertyBlock FindProperty(string name)
@@ -59,11 +63,16 @@ namespace FubuObjectBlocks
             return FindBlock<ObjectBlock>(name);
         }
 
+        public CollectionItemBlock FindCollection(string name)
+        {
+            return FindBlock<CollectionItemBlock>(name);
+        }
+
         public string OneLineSummary(int indent = 0)
         {
             var nameAndValue = "{0} '{1}'".ToFormat(Name, Value);
             var content = new[] {nameAndValue}
-                .Concat(Blocks.OfType<PropertyBlock>().Select(p => p.ToString()))
+                .Concat(GetBlocks<PropertyBlock>().Select(p => p.ToString()))
                 .Join(", ");
             return "{0}{1}".ToFormat(BlockIndenter.Indent(content, indent), Environment.NewLine);
         }
