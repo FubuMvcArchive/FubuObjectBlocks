@@ -51,7 +51,8 @@ namespace FubuObjectBlocks
 
         public string Serialize(object input, IObjectBlockSettings settings)
         {
-            return BlockFor(input, settings).ToString();
+            var block = BlockFor(input, settings);
+            return block.ToString();
         }
 
         public ObjectBlock BlockFor(object input, IObjectBlockSettings settings)

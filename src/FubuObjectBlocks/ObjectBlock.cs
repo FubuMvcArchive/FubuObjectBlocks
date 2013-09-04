@@ -69,10 +69,10 @@ namespace FubuObjectBlocks
             return FindBlock<CollectionItemBlock>(name);
         }
 
-        public string OneLineSummary(int indent = 0)
+        public string OneLineSummary(string collectionName = null, int indent = 0)
         {
             //TODO: one line summary not valid if there is no Name
-            var nameAndValue = "{0} '{1}'".ToFormat(Name, ImplicitValue);
+            var nameAndValue = "{0} '{1}'".ToFormat(collectionName ?? Name, ImplicitValue);
             var content = new[] {nameAndValue}
                 .Concat(GetBlocks<PropertyBlock>().Select(p => p.ToString()))
                 .Join(", ");

@@ -38,7 +38,7 @@ namespace FubuObjectBlocks
         public string ToString(int indent = 0)
         {
             return Blocks
-                .Select(x => x.OneLineSummary(indent))
+                .Select(x => x.OneLineSummary(Name, indent))
                 .Join("");
         }
     }
