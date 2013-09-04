@@ -63,8 +63,11 @@ namespace FubuObjectBlocks
         {
             var type = input.GetType();
             var implicitValue = settings.FindImplicitValue(type);
-            var implicitDisplayValue = implicitValue != null
-                ? _displayFormatter.GetDisplayForValue(implicitValue, implicitValue.GetValue(input))
+            var implicitValueBlock = implicitValue != null
+                ? new PropertyBlock(implicitValue.Name)
+                {
+                    Value = _displayFormatter.GetDisplayForValue(implicitValue, implicitValue.GetValue(input))
+                }
                 : null;
 
             Func<string, string> formatName = x => x != null ? x.FirstLetterLowercase() : null;
@@ -78,10 +81,11 @@ namespace FubuObjectBlocks
                     {
                         //TODO: strategy pattern in here?
                         var name = formatName(x.Name);
+                        var rawValue = x.GetValue(input, null);
 
-                        if (x.PropertyType.IsSimple() || x.HasAttribute<ImplicitValueAttribute>())
+                        //TODO: doesn't seem like ImplicitValue attribute has a place anymore
+                        if (x.PropertyType.IsSimple() || x.HasAttribute<ImplicitValueAttribute>()/*TODO:remove this part if we don't need it*/)
                         {
-                            var rawValue = x.GetValue(input, null);
                             var value = _displayFormatter.GetDisplayForValue(new SingleProperty(x), rawValue);
                             return new PropertyBlock(name)
                             {
@@ -95,18 +99,17 @@ namespace FubuObjectBlocks
                             return new CollectionItemBlock(name)
                             {
                                 Name = collectionName,
-                                Blocks = (x.GetValue(input, null) as IEnumerable)
+                                Blocks = (rawValue as IEnumerable)
                                     .Cast<object>()
                                     .Select(value => MakeBlock(value, settings, x.Name))
                                     .ToList()
                             };
                         }
 
-                        var child = x.GetValue(input, null);
-                        return (IBlock) MakeBlock(child, settings, x.Name);
+                        return (IBlock) MakeBlock(rawValue, settings, x.Name);
                     }).ToList(),
                 Name = formatName(objectName),
-                ImplicitValue = implicitDisplayValue
+                ImplicitValue = implicitValueBlock
             };
         }
 
@@ -114,7 +117,7 @@ namespace FubuObjectBlocks
         {
             var cache = new TypeDescriptorCache();
             var formatter = new DisplayFormatter(new InMemoryServiceLocator(), new Stringifier());
-            return new ObjectBlockSerializer(new MonadicBlockParser(), ObjectResolver.Basic(), cache, formatter);
+            return new ObjectBlockSerializer(new ObjectBlockParser(), ObjectResolver.Basic(), cache, formatter);
         }
     }
 }

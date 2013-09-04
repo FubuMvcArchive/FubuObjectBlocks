@@ -26,7 +26,8 @@ namespace FubuObjectBlocks
 
         public string Name { get; set; }
 
-        public string ImplicitValue { get; set; }
+        //TODO: turn this back to straight value
+        public PropertyBlock ImplicitValue { get; set; }
 
         public void AddBlock(IBlock block)
         {

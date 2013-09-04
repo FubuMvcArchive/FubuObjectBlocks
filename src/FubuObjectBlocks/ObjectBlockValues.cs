@@ -41,7 +41,7 @@ namespace FubuObjectBlocks
         {
             if (!Has(key)) return false;
 
-            return _root.FindBlock<ObjectBlock>(key).Blocks.Any();
+            return _root.FindBlock<ObjectBlock>(key) != null;
         }
 
         public IValueSource GetChild(string key)
@@ -73,11 +73,12 @@ namespace FubuObjectBlocks
 
         public bool Value(string key, Action<BindingValue> callback)
         {
+            //TODO: remove half of this check, can probably just right from _root.ImplicitValue if its set
             var implicitValue = _settings.ImplicitValue(typeof(T), key);
             string value;
-            if (implicitValue != null)
+            if (implicitValue != null && _root.ImplicitValue != null)
             {
-                value = _root.ImplicitValue;
+                value = _root.ImplicitValue.Value;
             }
             else
             {

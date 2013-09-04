@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using FubuCore;
 using FubuTestingSupport;
 using NUnit.Framework;
 
@@ -16,11 +15,11 @@ namespace FubuObjectBlocks.Tests
             theScenario = ParsingScenario.Create(scenario =>
             {
                 scenario.WriteLine("blockProperty:");
-                scenario.WriteLine("  property1 'string value'");
-                scenario.WriteLine("  property2 'another string value'");
+                scenario.WriteLine("  property1: 'string value'");
+                scenario.WriteLine("  property2: 'another string value'");
                 scenario.WriteLine("  nestedObject:");
-                scenario.WriteLine("    nestedProperty1 '1'");
-                scenario.WriteLine("    nestedProperty2 '2'");
+                scenario.WriteLine("    nestedProperty1: '1'");
+                scenario.WriteLine("    nestedProperty2: '2'");
             });
         }
 

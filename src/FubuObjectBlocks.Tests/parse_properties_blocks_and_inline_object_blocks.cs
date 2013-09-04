@@ -15,16 +15,14 @@ namespace FubuObjectBlocks.Tests
         {
             theScenario = ParsingScenario.Create(scenario =>
             {
-                scenario.WriteLine("test1 'immediate value'");
+                scenario.WriteLine("test1: 'immediate value'");
                 scenario.WriteLine("");
                 scenario.WriteLine("nestedType:");
-                scenario.WriteLine("  nestedProperty 'string value'");
+                scenario.WriteLine("  nestedProperty: 'string value'");
                 scenario.WriteLine("");
                 scenario.WriteLine("feed 'some url', mode: 'float', stability: 'released'");
                 scenario.WriteLine("");
-                scenario.WriteLine("test2 'another value'");
-                
-                
+                scenario.WriteLine("test2: 'another value'");
             });
         }
 
@@ -70,11 +68,11 @@ namespace FubuObjectBlocks.Tests
         }
 
         [Test]
-        public void reads_the_property_name_and_value()
+        public void reads_the_inline_object_name_and_implicit_value()
         {
             var inlineNested = theInlineNestedObject;
             inlineNested.Name.ShouldEqual("feed");
-            inlineNested.ImplicitValue.ShouldEqual("some url");
+            inlineNested.ImplicitValue.Value.ShouldEqual("some url");
         }
 
         [Test]

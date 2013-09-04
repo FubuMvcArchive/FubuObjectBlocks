@@ -126,11 +126,15 @@ namespace FubuObjectBlocks.Tests
         [Test]
         public void get_implicit_value()
         {
-            var property = new PropertyBlock("feed") { Value = "http://www.google.com" };
+            var feedBlock = new ObjectBlock("feed")
+            {
+                ImplicitValue = new PropertyBlock("url")
+                {
+                    Value = "http://www.google.com"
+                }
+            };
 
-            theBlock.AddBlock(property);
-
-            var mappedValueSource = new ObjectBlockValues<FeedObject>(theBlock, new FeedObjectSettings());
+            var mappedValueSource = new ObjectBlockValues<FeedObject>(feedBlock, new FeedObjectSettings());
 
             var value = "";
             mappedValueSource.Value("Url", x =>

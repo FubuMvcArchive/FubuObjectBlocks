@@ -14,12 +14,12 @@ namespace FubuObjectBlocks.Tests
         {
             theScenario = ParsingScenario.Create(scenario =>
             {
-                scenario.WriteLine("test1 'immediate value'");
+                scenario.WriteLine("test1: 'immediate value'");
                 scenario.WriteLine("");
                 scenario.WriteLine("nestedType:");
-                scenario.WriteLine("  nestedProperty 'string value'");
+                scenario.WriteLine("  nestedProperty: 'string value'");
                 scenario.WriteLine("");
-                scenario.WriteLine("test2 'another value'");
+                scenario.WriteLine("test2: 'another value'");
             });
         }
 

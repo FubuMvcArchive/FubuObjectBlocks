@@ -16,8 +16,8 @@ namespace FubuObjectBlocks.Tests
             {
                 scenario.WriteLine("# Comment");
                 scenario.WriteLine("blockProperty:");
-                scenario.WriteLine("  property1 'string value'");
-                scenario.WriteLine("  property2 'another string value'");
+                scenario.WriteLine("  property1: 'string value'");
+                scenario.WriteLine("  property2: 'another string value'");
             });
         }
 

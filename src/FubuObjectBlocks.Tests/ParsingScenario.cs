@@ -20,7 +20,7 @@ namespace FubuObjectBlocks.Tests
             _fileName = fileName;
             _files = new FileSystem();
 
-            _parser = new MonadicBlockParser();
+            _parser = new ObjectBlockParser();
 
             var formatter = new DisplayFormatter(new InMemoryServiceLocator(), new Stringifier());
             _serializer = new ObjectBlockSerializer(_parser, ObjectResolver.Basic(), new TypeDescriptorCache(), formatter);

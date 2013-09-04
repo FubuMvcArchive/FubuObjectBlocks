@@ -26,6 +26,11 @@ namespace FubuObjectBlocks
         {
             return name.Substring(0, 1).ToLower() + name.Substring(1);
         }
+
+        public static string[] Split(this string input, string delimiter)
+        {
+            return input.Split(new[] {delimiter}, StringSplitOptions.RemoveEmptyEntries);
+        }
     }
 
     public class ObjectBlockSettings : IObjectBlockSettings
