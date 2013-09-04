@@ -6,7 +6,7 @@ namespace FubuObjectBlocks
 {
     public static class BlockIndenter
     {
-        public static int IndentSize;
+        public static int IndentSize = 2;
 
         public static string Repeat(int size, string content)
         {

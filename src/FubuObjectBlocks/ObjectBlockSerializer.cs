@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using FubuCore;
 using FubuCore.Binding;
@@ -58,13 +59,15 @@ namespace FubuObjectBlocks
             return MakeBlock(input, settings);
         }
 
-        private ObjectBlock MakeBlock(object input, IObjectBlockSettings settings)
+        private ObjectBlock MakeBlock(object input, IObjectBlockSettings settings, string objectName = null)
         {
             var type = input.GetType();
             var implicitValue = settings.FindImplicitValue(type);
-            var displayValue = implicitValue != null
+            var implicitDisplayValue = implicitValue != null
                 ? _displayFormatter.GetDisplayForValue(implicitValue, implicitValue.GetValue(input))
                 : null;
+
+            Func<string, string> formatName = x => x != null ? x.FirstLetterLowercase() : null;
 
             return new ObjectBlock
             {
@@ -73,7 +76,8 @@ namespace FubuObjectBlocks
                     .Where(x => implicitValue == null || !implicitValue.Equals(new SingleProperty(x)))
                     .Select(x =>
                     {
-                        var name = x.Name.FirstLetterLowercase();
+                        //TODO: strategy pattern in here?
+                        var name = formatName(x.Name);
 
                         if (x.PropertyType.IsSimple() || x.HasAttribute<ImplicitValueAttribute>())
                         {
@@ -93,15 +97,16 @@ namespace FubuObjectBlocks
                                 Name = collectionName,
                                 Blocks = (x.GetValue(input, null) as IEnumerable)
                                     .Cast<object>()
-                                    .Select(value => MakeBlock(value, settings))
+                                    .Select(value => MakeBlock(value, settings, x.Name))
                                     .ToList()
                             };
                         }
 
                         var child = x.GetValue(input, null);
-                        return (IBlock) MakeBlock(child, settings);
+                        return (IBlock) MakeBlock(child, settings, x.Name);
                     }).ToList(),
-                Value = displayValue
+                Name = formatName(objectName),
+                ImplicitValue = implicitDisplayValue
             };
         }
 

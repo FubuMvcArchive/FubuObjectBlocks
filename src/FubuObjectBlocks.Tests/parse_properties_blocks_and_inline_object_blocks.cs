@@ -74,7 +74,7 @@ namespace FubuObjectBlocks.Tests
         {
             var inlineNested = theInlineNestedObject;
             inlineNested.Name.ShouldEqual("feed");
-            inlineNested.Value.ShouldEqual("some url");
+            inlineNested.ImplicitValue.ShouldEqual("some url");
         }
 
         [Test]

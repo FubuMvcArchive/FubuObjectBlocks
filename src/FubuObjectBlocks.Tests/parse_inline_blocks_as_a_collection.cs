@@ -46,10 +46,10 @@ namespace FubuObjectBlocks.Tests
         {
             var collectionItems = theCollection.Blocks.ToArray();
 
-            collectionItems[0].Value.ShouldEqual("url1");
+            collectionItems[0].ImplicitValue.ShouldEqual("url1");
             collectionItems[0].FindProperty("mode").Value.ShouldEqual("fixed");
 
-            collectionItems[1].Value.ShouldEqual("url2");
+            collectionItems[1].ImplicitValue.ShouldEqual("url2");
             collectionItems[1].FindProperty("mode").Value.ShouldEqual("float");
         }
     }

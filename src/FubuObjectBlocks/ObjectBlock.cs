@@ -26,7 +26,7 @@ namespace FubuObjectBlocks
 
         public string Name { get; set; }
 
-        public string Value { get; set; }
+        public string ImplicitValue { get; set; }
 
         public void AddBlock(IBlock block)
         {
@@ -70,7 +70,8 @@ namespace FubuObjectBlocks
 
         public string OneLineSummary(int indent = 0)
         {
-            var nameAndValue = "{0} '{1}'".ToFormat(Name, Value);
+            //TODO: one line summary not valid if there is no Name
+            var nameAndValue = "{0} '{1}'".ToFormat(Name, ImplicitValue);
             var content = new[] {nameAndValue}
                 .Concat(GetBlocks<PropertyBlock>().Select(p => p.ToString()))
                 .Join(", ");
@@ -79,8 +80,14 @@ namespace FubuObjectBlocks
 
         public string ToString(int indent = 0)
         {
-            return new[] { BlockIndenter.Indent("{0}:".ToFormat(Name), indent) }
-                .Concat(Blocks.Select(x => x.ToString(indent + 1)))
+            var hasName = Name.IsNotEmpty();
+            var objectTitle = hasName
+                ? new[] {BlockIndenter.Indent("{0}:".ToFormat(Name), indent)}
+                : new string[] {};
+            var nextIndentAmount = hasName ? indent + 1 : indent;
+
+            return objectTitle
+                .Concat(Blocks.Select(x => x.ToString(nextIndentAmount)))
                 .Join(Environment.NewLine);
         }
     }

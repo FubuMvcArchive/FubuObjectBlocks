@@ -18,9 +18,8 @@ namespace FubuObjectBlocks
 
         public static CollectionConfiguration ToCollectionConfiguration(this Accessor accessor)
         {
-            var propertyType = accessor.PropertyType;
-            var settings = propertyType.GetAttribute<BlockSettingsAttribute>();
-            return settings.ToConfiguration(propertyType.DeclaringType, accessor.InnerProperty);
+            var settings = accessor.InnerProperty.GetAttribute<BlockSettingsAttribute>();
+            return settings.ToConfiguration(accessor.InnerProperty);
         }
 
         public static string FirstLetterLowercase(this string name)
@@ -40,7 +39,7 @@ namespace FubuObjectBlocks
             Cache = new TypeDescriptorCache();
 
             ByAccessor = new Cache<Accessor, CollectionConfiguration>(
-                x => x.PropertyType.HasAttribute<BlockSettingsAttribute>()
+                x => x.InnerProperty.HasAttribute<BlockSettingsAttribute>()
                     ? x.ToCollectionConfiguration()
                     : new CollectionConfiguration(x));
 
@@ -67,15 +66,32 @@ namespace FubuObjectBlocks
 
         public Accessor ImplicitValue(Type type, string key)
         {
-            var map = CollectionsFor[type]
-                .SingleOrDefault(x => x.Implicit != null && x.Implicit.Name.EqualsIgnoreCase(key) && x.Implicit.OwnerType == type);
-            return map == null ? null : map.Implicit;
+            return ImplicitFor(type, x => x.Implicit.Name.EqualsIgnoreCase(key));
+        }
+
+        public CollectionConfiguration ImplicitCollectionFor(Type type, Func<CollectionConfiguration,bool> extraCondition = null)
+        {
+            extraCondition = extraCondition ?? (x => true);
+            return Implicits().FirstOrDefault(x => x.Implicit.OwnerType == type && extraCondition(x));
+        }
+
+        public Accessor ImplicitFor(Type type, Func<CollectionConfiguration,bool> extraCondition = null)
+        {
+            extraCondition = extraCondition ?? (x => true);
+            var map = ImplicitCollectionFor(type, extraCondition);
+            return map != null ? map.Implicit : null;
+        }
+
+        public IEnumerable<CollectionConfiguration> Implicits()
+        {
+            return CollectionsFor.GetAllKeys()
+                .SelectMany(x => CollectionsFor[x])
+                .Where(x => x.Implicit != null);
         }
 
         public Accessor FindImplicitValue(Type type)
         {
-            var map = CollectionsFor[type].FirstOrDefault(x => x.Implicit != null && x.Implicit.OwnerType == type);
-            return map == null ? null : map.Implicit;
+            return ImplicitFor(type);
         }
 
         public Type FindCollectionType(Type type, string key)

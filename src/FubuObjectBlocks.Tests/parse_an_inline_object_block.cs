@@ -38,7 +38,7 @@ namespace FubuObjectBlocks.Tests
         {
             var block = theObject;
             block.Name.ShouldEqual("feed");
-            block.Value.ShouldEqual("some url");
+            block.ImplicitValue.ShouldEqual("some url");
         }
 
         [Test]

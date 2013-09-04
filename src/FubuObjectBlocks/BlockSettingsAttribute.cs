@@ -20,7 +20,7 @@ namespace FubuObjectBlocks
         public string ExpressAs { get; set; }
         public string ImplicitProperty { get; set; }
 
-        public CollectionConfiguration ToConfiguration(Type type, PropertyInfo property)
+        public CollectionConfiguration ToConfiguration(PropertyInfo property)
         {
             if (!property.PropertyType.IsGenericEnumerable())
             {
