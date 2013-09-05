@@ -4,90 +4,119 @@ using System.Linq;
 using System.Linq.Expressions;
 using FubuCore;
 using FubuCore.Reflection;
+using FubuCore.Util;
 
 namespace FubuObjectBlocks
 {
+    public static class BlockExtensions
+    {
+        public static bool IsCollectionBlockCompatible(this Type type)
+        {
+            //REMOVE: replaced with IsGenericEnumerable()
+            return type.Closes(typeof (IEnumerable<>));
+        }
+
+        public static CollectionConfiguration ToCollectionConfiguration(this Accessor accessor)
+        {
+            var settings = accessor.InnerProperty.GetAttribute<BlockSettingsAttribute>();
+            return settings.ToConfiguration(accessor.InnerProperty);
+        }
+
+        public static string FirstLetterLowercase(this string name)
+        {
+            return name.Substring(0, 1).ToLower() + name.Substring(1);
+        }
+
+        public static string[] Split(this string input, string delimiter)
+        {
+            return input.Split(new[] {delimiter}, StringSplitOptions.RemoveEmptyEntries);
+        }
+    }
+
     public class ObjectBlockSettings : IObjectBlockSettings
     {
-        private readonly IList<Type> _filledTypes = new List<Type>(); 
-        private readonly IList<CollectionConfiguration> _collections = new List<CollectionConfiguration>();
-        private static readonly TypeDescriptorCache Cache;
+        private readonly TypeDescriptorCache Cache;
+        private readonly Cache<Accessor, CollectionConfiguration> ByAccessor;
+        private readonly Cache<Type, IList<CollectionConfiguration>> CollectionsFor;
 
-        static ObjectBlockSettings()
+        public ObjectBlockSettings()
         {
             Cache = new TypeDescriptorCache();
+
+            ByAccessor = new Cache<Accessor, CollectionConfiguration>(
+                x => x.InnerProperty.HasAttribute<BlockSettingsAttribute>()
+                    ? x.ToCollectionConfiguration()
+                    : new CollectionConfiguration(x));
+
+            CollectionsFor = new Cache<Type, IList<CollectionConfiguration>>(
+                type => Cache.GetPropertiesFor(type)
+                    .Values
+                    .Where(x => x.PropertyType.IsGenericEnumerable())
+                    .Select(x => ByAccessor[new SingleProperty(x)])
+                    .ToList());
         }
 
 
-        protected void addCollection(CollectionConfiguration collection)
+        public CollectionConfiguration Register(Accessor accessor)
         {
-            _collections.Add(collection);
+            var configuration = new CollectionConfiguration(accessor);
+            ByAccessor[accessor] = configuration;
+            return configuration;
         }
 
-        private void fillSettings(Type type)
+        public ObjectBlockSettings Include(Type type)
         {
-            if (_filledTypes.Contains(type))
-            {
-                return;
-            }
-
-            Cache.ForEachProperty(type, property =>
-            {
-                var accessor = new SingleProperty(property);
-                if (property.HasAttribute<BlockSettingsAttribute>())
-                {
-                    var settings = property.GetAttribute<BlockSettingsAttribute>();
-                    _collections.Add(settings.ToConfiguration(type, property));
-                }
-                else if(!_collections.Any(x => x.Accessor.Equals(accessor)))
-                {
-                    var settings = new CollectionConfiguration(accessor)
-                    {
-                        Name = accessor.Name
-                    };
-
-                    _collections.Add(settings);
-                }
-            });
-
-            _filledTypes.Add(type);
+            var collections = CollectionsFor[type];
+            return this;
         }
 
         public string Collection(Type type, string key)
         {
-            fillSettings(type);
-
-            var map = _collections.SingleOrDefault(x => x.Accessor.Name.EqualsIgnoreCase(key));
-            if (map != null)
-            {
-                return map.Name;
-            }
-
-            return key;
+            var map = CollectionsFor[type].SingleOrDefault(x => x.Accessor.Name.EqualsIgnoreCase(key));
+            return map != null ? map.Name : key;
         }
 
-        public Accessor ImplicitValue(Type type, ObjectBlock block, string key)
+        public Accessor ImplicitValue(Type type, string key)
         {
-            fillSettings(type);
-
-            var map = _collections
-                .SingleOrDefault(x => x.Implicit != null && x.Implicit.Name.EqualsIgnoreCase(key) && x.Implicit.OwnerType == type);
-            return map == null ? null : map.Implicit;
+            return ImplicitFor(type, x => x.Implicit.Name.EqualsIgnoreCase(key));
         }
 
-        public Accessor FindImplicitValue(Type type, ObjectBlock block)
+        public CollectionConfiguration ImplicitCollectionFor(Type type, Func<CollectionConfiguration,bool> extraCondition = null)
         {
-            fillSettings(type);
+            extraCondition = extraCondition ?? (x => true);
+            return Implicits().FirstOrDefault(x => x.Implicit.OwnerType == type && extraCondition(x));
+        }
 
-            var map = _collections.FirstOrDefault(x => x.Implicit != null && x.Implicit.OwnerType == type);
-            return map == null ? null : map.Implicit;
+        public Accessor ImplicitFor(Type type, Func<CollectionConfiguration,bool> extraCondition = null)
+        {
+            extraCondition = extraCondition ?? (x => true);
+            var map = ImplicitCollectionFor(type, extraCondition);
+            return map != null ? map.Implicit : null;
+        }
+
+        public IEnumerable<CollectionConfiguration> Implicits()
+        {
+            return CollectionsFor.GetAllKeys()
+                .SelectMany(x => CollectionsFor[x])
+                .Where(x => x.Implicit != null);
+        }
+
+        public IEnumerable<string> KnownCollectionNames()
+        {
+            return CollectionsFor.GetAllKeys()
+                .SelectMany(x => CollectionsFor[x])
+                .Select(x => x.Name)
+                .Distinct();
+        }
+
+        public Accessor FindImplicitValue(Type type)
+        {
+            return ImplicitFor(type);
         }
 
         public Type FindCollectionType(Type type, string key)
         {
-            fillSettings(type);
-
-            var collectionMap = _collections.SingleOrDefault(x => x.Name.EqualsIgnoreCase(key));
+            var collectionMap = CollectionsFor[type].SingleOrDefault(x => x.Name.EqualsIgnoreCase(key));
             if (collectionMap == null)
             {
                 throw new InvalidOperationException("Could not find property: " + key);
@@ -101,9 +130,7 @@ namespace FubuObjectBlocks
     {
         public ConfigureCollectionExpression<TTarget> Collection<TTarget>(Expression<Func<T, IEnumerable<TTarget>>> expression)
         {
-            var config = new CollectionConfiguration(ReflectionHelper.GetAccessor(expression));
-            addCollection(config);
-
+            var config = Register(ReflectionHelper.GetAccessor(expression));
             return new ConfigureCollectionExpression<TTarget>(config);
         }
 

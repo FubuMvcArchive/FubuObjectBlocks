@@ -2,6 +2,6 @@
 {
     public interface IObjectBlockParser
     {
-        ObjectBlock Parse(string input);
+        ObjectBlock Parse(string input, IObjectBlockSettings settings);
     }
 }

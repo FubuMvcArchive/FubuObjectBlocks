@@ -13,32 +13,32 @@ namespace FubuObjectBlocks.Tests
         public void reads_and_writes()
         {
             var solution = new Solution
+            {
+                Options = new SolutionOptions
                 {
-                    Options = new SolutionOptions
-                        {
-                            Name = new SolutionName("ripple"),
-                            Nuspecs = "packaging/nuget",
-                            SrcFolder = "src",
-                            BuildCmd = "rake",
-                            FastBuildCommand = "rake compile",
-                            Constraints = new SolutionConstraints
-                                {
-                                    Float = "current",
-                                    Fixed = "current,nextMajor"
-                                }
-                        }
-                };
-
-            solution.Feeds = new[]
+                    Name = new SolutionName("ripple"),
+                    Nuspecs = "packaging/nuget",
+                    SrcFolder = "src",
+                    BuildCmd = "rake",
+                    FastBuildCommand = "rake compile",
+                    Constraints = new SolutionConstraints
+                    {
+                        Float = "current",
+                        Fixed = "current,nextMajor"
+                    }
+                },
+                Feeds = new[]
                 {
                     new Feed
-                        {
-                            Url = "http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc",
-                            Mode = "float",
-                            Stability = "released"
-                        },
+                    {
+                        Url = "http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc",
+                        Mode = "float",
+                        Stability = "released"
+                    },
                     new Feed {Url = "http://nuget.org/api/v2", Mode = "fixed", Stability = "released"}
-                };
+                }
+            };
+
 
             var serializer = ObjectBlockSerializer.Basic();
 
@@ -50,6 +50,7 @@ namespace FubuObjectBlocks.Tests
 
             newSolution.ShouldEqual(solution);
         }
+
         public class Solution
         {
             public SolutionOptions Options { get; set; }
@@ -186,6 +187,8 @@ namespace FubuObjectBlocks.Tests
 
         }
 
+        //TODO: refactor these to use AllPropertyValues.AreEqual and AllPropertyValues.HashCode
+        //once they get included with FubuCore
         public class Feed
         {
             public string Url { get; set; }

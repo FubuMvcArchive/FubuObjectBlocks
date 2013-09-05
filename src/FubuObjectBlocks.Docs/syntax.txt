@@ -1,12 +1,12 @@
 ﻿solution:
-  name 'ripple'
-  nuspecs 'packaging/nuget'
-  srcFolder 'src'
-  buildCmd 'rake'
-  fastBuildCommand 'rake compile'
+  name: 'ripple'
+  nuspecs: 'packaging/nuget'
+  srcFolder: 'src'
+  buildCmd: 'rake'
+  fastBuildCommand: 'rake compile'
   constraints:
-    float 'current'
-    fixed 'current,nextMajor'
+    float: 'current'
+    fixed: 'current,nextMajor'
  
 feed 'http://build.fubu-project.org/guestAuth/app/nuget/v1/FeedService.svc', mode: 'float', stability: 'released'
 feed 'http://nuget.org/api/v2', mode: 'fixed', stability: 'released'
