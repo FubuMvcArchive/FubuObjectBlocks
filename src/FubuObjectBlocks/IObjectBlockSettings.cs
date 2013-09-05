@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FubuCore.Reflection;
 
 namespace FubuObjectBlocks
@@ -11,5 +12,6 @@ namespace FubuObjectBlocks
         Accessor FindImplicitValue(Type type);
 
         Type FindCollectionType(Type type, string key);
+        IEnumerable<string> KnownCollectionNames();
     }
 }

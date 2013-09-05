@@ -35,11 +35,11 @@ namespace FubuObjectBlocks
 
     public class ObjectBlockSettings : IObjectBlockSettings
     {
-        private static readonly TypeDescriptorCache Cache;
-        private static readonly Cache<Accessor, CollectionConfiguration> ByAccessor;
-        private static readonly Cache<Type, IList<CollectionConfiguration>> CollectionsFor;
+        private readonly TypeDescriptorCache Cache;
+        private readonly Cache<Accessor, CollectionConfiguration> ByAccessor;
+        private readonly Cache<Type, IList<CollectionConfiguration>> CollectionsFor;
 
-        static ObjectBlockSettings()
+        public ObjectBlockSettings()
         {
             Cache = new TypeDescriptorCache();
 
@@ -56,11 +56,18 @@ namespace FubuObjectBlocks
                     .ToList());
         }
 
-        public static CollectionConfiguration Register(Accessor accessor)
+
+        public CollectionConfiguration Register(Accessor accessor)
         {
             var configuration = new CollectionConfiguration(accessor);
             ByAccessor[accessor] = configuration;
             return configuration;
+        }
+
+        public ObjectBlockSettings Include(Type type)
+        {
+            var collections = CollectionsFor[type];
+            return this;
         }
 
         public string Collection(Type type, string key)
@@ -92,6 +99,14 @@ namespace FubuObjectBlocks
             return CollectionsFor.GetAllKeys()
                 .SelectMany(x => CollectionsFor[x])
                 .Where(x => x.Implicit != null);
+        }
+
+        public IEnumerable<string> KnownCollectionNames()
+        {
+            return CollectionsFor.GetAllKeys()
+                .SelectMany(x => CollectionsFor[x])
+                .Select(x => x.Name)
+                .Distinct();
         }
 
         public Accessor FindImplicitValue(Type type)

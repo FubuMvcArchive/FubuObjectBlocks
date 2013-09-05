@@ -7,7 +7,6 @@ using FubuCore.Reflection;
 
 namespace FubuObjectBlocks
 {
-    //TODO: this seems to only apply to Collections, name it CollectionBlockSettings?
     public class BlockSettingsAttribute : Attribute
     {
         private static readonly TypeDescriptorCache Cache;

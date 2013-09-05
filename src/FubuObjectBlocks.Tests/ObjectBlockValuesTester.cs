@@ -128,10 +128,7 @@ namespace FubuObjectBlocks.Tests
         {
             var feedBlock = new ObjectBlock("feed")
             {
-                ImplicitValue = new PropertyBlock("url")
-                {
-                    Value = "http://www.google.com"
-                }
+                ImplicitValue = "http://www.google.com"
             };
 
             var mappedValueSource = new ObjectBlockValues<FeedObject>(feedBlock, new FeedObjectSettings());
@@ -175,6 +172,11 @@ namespace FubuObjectBlocks.Tests
             public Type FindCollectionType(Type type, string key)
             {
                 return type;
+            }
+
+            public IEnumerable<string> KnownCollectionNames()
+            {
+                yield return "feed";
             }
         }
     }

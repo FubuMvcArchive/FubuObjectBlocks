@@ -26,8 +26,7 @@ namespace FubuObjectBlocks
 
         public string Name { get; set; }
 
-        //TODO: turn this back to straight value
-        public PropertyBlock ImplicitValue { get; set; }
+        public string ImplicitValue { get; set; }
 
         public void AddBlock(IBlock block)
         {
@@ -67,6 +66,26 @@ namespace FubuObjectBlocks
         public CollectionItemBlock FindCollection(string name)
         {
             return FindBlock<CollectionItemBlock>(name);
+        }
+
+        public ObjectBlock MakeCollections(IObjectBlockSettings settings)
+        {
+            var collectionNames = settings.KnownCollectionNames().ToList();
+
+            var items = Blocks
+                .OfType<ObjectBlock>()
+                .GroupBy(x => x.Name)
+                //known collection names (handles singles) or any grouping of 2 or more (handles unknowns)
+                .Where(x => collectionNames.Contains(x.Key) || x.Count() > 1)
+                .ToDictionary(x => x.Key, x => x.ToList());
+
+            var allItems = items.SelectMany(x => x.Value).ToList();
+            var collections = items.Select(x => new CollectionItemBlock(x.Key) {Blocks = x.Value});
+
+            _blocks.RemoveAll(allItems.Contains);
+            _blocks.AddRange(collections);
+            allItems.Each(x => x.MakeCollections(settings));
+            return this;
         }
 
         public string OneLineSummary(string collectionName = null, int indent = 0)

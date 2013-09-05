@@ -28,10 +28,10 @@ namespace FubuObjectBlocks.Tests
 
             var feeds = block.FindBlock<CollectionItemBlock>("feed").Blocks.ToArray();
             
-            feeds[0].ImplicitValue.Value.ShouldEqual("http://localhost:8080");
+            feeds[0].ImplicitValue.ShouldEqual("http://localhost:8080");
             feeds[0].FindBlock<PropertyBlock>("mode").Value.ShouldEqual("fixed");
 
-            feeds[1].ImplicitValue.Value.ShouldEqual("http://localhost:8181");
+            feeds[1].ImplicitValue.ShouldEqual("http://localhost:8181");
             feeds[1].FindBlock<PropertyBlock>("mode").Value.ShouldEqual("float");
         }
 

@@ -25,16 +25,15 @@ namespace FubuObjectBlocks
 
         public T Deserialize<T>(string input)
         {
-            var block = _parser.Parse(input);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block));
-
-            return result.Value.As<T>();
+            return Deserialize<T, ObjectBlockSettings<T>>(input);
         }
 
-        public T Deserialize<T, TMap>(string input) where TMap : ObjectBlockSettings<T>, new()
+        public T Deserialize<T, TSettings>(string input) where TSettings : ObjectBlockSettings<T>, new()
         {
-            var block = _parser.Parse(input);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block, new TMap()));
+            var settings = new TSettings();
+            settings.Include(typeof (T));
+            var block = _parser.Parse(input, settings);
+            var result = _resolver.BindModel(typeof (T), new ObjectBlockValues<T>(block, settings));
 
             return result.Value.As<T>();
         }
@@ -63,12 +62,9 @@ namespace FubuObjectBlocks
         private ObjectBlock MakeBlock(object input, IObjectBlockSettings settings, string objectName = null)
         {
             var type = input.GetType();
-            var implicitValue = settings.FindImplicitValue(type);
-            var implicitValueBlock = implicitValue != null
-                ? new PropertyBlock(implicitValue.Name)
-                {
-                    Value = _displayFormatter.GetDisplayForValue(implicitValue, implicitValue.GetValue(input))
-                }
+            var implicitAccessor = settings.FindImplicitValue(type);
+            var implicitValue = implicitAccessor != null
+                ? _displayFormatter.GetDisplayForValue(implicitAccessor, implicitAccessor.GetValue(input))
                 : null;
 
             Func<string, string> formatName = x => x != null ? x.FirstLetterLowercase() : null;
@@ -110,7 +106,7 @@ namespace FubuObjectBlocks
                         return (IBlock) MakeBlock(rawValue, settings, x.Name);
                     }).ToList(),
                 Name = formatName(objectName),
-                ImplicitValue = implicitValueBlock
+                ImplicitValue = implicitValue
             };
         }
 

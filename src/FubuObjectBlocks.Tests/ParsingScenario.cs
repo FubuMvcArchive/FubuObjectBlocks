@@ -35,7 +35,7 @@ namespace FubuObjectBlocks.Tests
 
         public ObjectBlock Read()
         {
-            return _parser.Parse(readFile());
+            return _parser.Parse(readFile(), new ObjectBlockSettings());
         }
 
         public T Read<T>()

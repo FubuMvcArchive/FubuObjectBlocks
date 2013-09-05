@@ -78,7 +78,7 @@ namespace FubuObjectBlocks
             string value;
             if (implicitValue != null && _root.ImplicitValue != null)
             {
-                value = _root.ImplicitValue.Value;
+                value = _root.ImplicitValue;
             }
             else
             {
