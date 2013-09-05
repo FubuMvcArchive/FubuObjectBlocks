@@ -12,7 +12,7 @@ namespace FubuObjectBlocks.Tests
     {
         private readonly string _fileName;
         private readonly IFileSystem _files;
-        private readonly ObjectBlockParser _parser;
+        private readonly IObjectBlockParser _parser;
         private readonly ObjectBlockSerializer _serializer;
 
         public ParsingScenario(string fileName)
@@ -35,7 +35,7 @@ namespace FubuObjectBlocks.Tests
 
         public ObjectBlock Read()
         {
-            return _parser.Parse(readFile());
+            return _parser.Parse(readFile(), new ObjectBlockSettings());
         }
 
         public T Read<T>()

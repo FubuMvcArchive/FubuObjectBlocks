@@ -18,10 +18,10 @@ namespace FubuObjectBlocks.Tests
 
             var block = serializer.BlockFor(target, new ObjectBlockSettings());
 
-            block.FindProperty("name").Block.Value.ShouldEqual("test");
+            block.FindProperty("name").Value.ShouldEqual("test");
 
-            var nested = block.FindProperty("nested");
-            nested.Block.FindProperty("email").Block.Value.ShouldEqual("test@test.com");
+            var nested = block.FindNested("nested");
+            nested.FindProperty("email").Value.ShouldEqual("test@test.com");
         }
 
         public class ComplexTarget

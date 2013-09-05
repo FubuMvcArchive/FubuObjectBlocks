@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using FubuCore;
 using FubuCore.Binding;
 using FubuCore.Formatting;
@@ -23,16 +25,15 @@ namespace FubuObjectBlocks
 
         public T Deserialize<T>(string input)
         {
-            var block = _parser.Parse(input);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block));
-
-            return result.Value.As<T>();
+            return Deserialize<T, ObjectBlockSettings<T>>(input);
         }
 
-        public T Deserialize<T, TMap>(string input) where TMap : ObjectBlockSettings<T>, new()
+        public T Deserialize<T, TSettings>(string input) where TSettings : ObjectBlockSettings<T>, new()
         {
-            var block = _parser.Parse(input);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block, new TMap()));
+            var settings = new TSettings();
+            settings.Include(typeof (T));
+            var block = _parser.Parse(input, settings);
+            var result = _resolver.BindModel(typeof (T), new ObjectBlockValues<T>(block, settings));
 
             return result.Value.As<T>();
         }
@@ -50,74 +51,63 @@ namespace FubuObjectBlocks
         public string Serialize(object input, IObjectBlockSettings settings)
         {
             var block = BlockFor(input, settings);
-            return block.Write();
+            return block.ToString();
         }
 
         public ObjectBlock BlockFor(object input, IObjectBlockSettings settings)
         {
-            var root = new ObjectBlock();
-
-            fillBlock(root, input, settings);
-
-            return root;
+            return MakeBlock(input, settings);
         }
 
-        private void fillBlock(ObjectBlock block, object input, IObjectBlockSettings settings)
+        private ObjectBlock MakeBlock(object input, IObjectBlockSettings settings, string objectName = null)
         {
             var type = input.GetType();
-            var implicitValue = settings.FindImplicitValue(type, block);
+            var implicitAccessor = settings.FindImplicitValue(type);
+            var implicitValue = implicitAccessor != null
+                ? _displayFormatter.GetDisplayForValue(implicitAccessor, implicitAccessor.GetValue(input))
+                : null;
 
-            _cache.ForEachProperty(type, property =>
+            Func<string, string> formatName = x => x != null ? x.FirstLetterLowercase() : null;
+
+            return new ObjectBlock
             {
-                if (implicitValue != null && implicitValue.Equals(new SingleProperty(property)))
-                {
-                    return;
-                }
-
-                var valueBlock = new ObjectBlock();
-                var propBlock = new PropertyBlock(toBlockPropertyName(property.Name)) { Block = valueBlock };
-
-                if (property.PropertyType.IsSimple() || property.HasAttribute<ImplicitValueAttribute>())
-                {
-                    var rawValue = property.GetValue(input, null);
-                    valueBlock.Value = _displayFormatter.GetDisplayForValue(new SingleProperty(property), rawValue);
-                }
-                else if (property.PropertyType.IsGenericEnumerable())
-                {
-                    var values = property.GetValue(input, null) as IEnumerable;
-                    if (values != null)
+                Blocks = _cache.GetPropertiesFor(type)
+                    .Values
+                    .Where(x => implicitValue == null || !implicitValue.Equals(new SingleProperty(x)))
+                    .Select(x =>
                     {
-                        propBlock.Clear();
-                        propBlock.Name = settings.Collection(type, propBlock.Name);
-                        foreach (var value in values)
+                        //TODO: strategy pattern in here?
+                        var name = formatName(x.Name);
+                        var rawValue = x.GetValue(input, null);
+
+                        //TODO: doesn't seem like ImplicitValue attribute has a place anymore
+                        if (x.PropertyType.IsSimple() || x.HasAttribute<ImplicitValueAttribute>()/*TODO:remove this part if we don't need it*/)
                         {
-                            var childBlock = new ObjectBlock();
-                            fillBlock(childBlock, value, settings);
-
-                            propBlock.AddBlock(childBlock);
+                            var value = _displayFormatter.GetDisplayForValue(new SingleProperty(x), rawValue);
+                            return new PropertyBlock(name)
+                            {
+                                Value = value
+                            };
                         }
-                    }
-                }
-                else
-                {
-                    var child = property.GetValue(input, null);
-                    fillBlock(valueBlock, child, settings);
-                }
 
-                block.AddProperty(propBlock);
-            });
+                        if (x.PropertyType.IsGenericEnumerable())
+                        {
+                            var collectionName = settings.Collection(type, name);
+                            return new CollectionItemBlock(name)
+                            {
+                                Name = collectionName,
+                                Blocks = (rawValue as IEnumerable)
+                                    .Cast<object>()
+                                    .Select(value => MakeBlock(value, settings, x.Name))
+                                    .ToList()
+                            };
+                        }
 
-            
-            if (implicitValue != null)
-            {
-                var value = implicitValue.GetValue(input);
-                block.Value = _displayFormatter.GetDisplayForValue(implicitValue, value);
-            }
-        }
-
-        private static string toBlockPropertyName(string name)
-        {
-            return name.Substring(0, 1).ToLower() + name.Substring(1);
+                        return (IBlock) MakeBlock(rawValue, settings, x.Name);
+                    }).ToList(),
+                Name = formatName(objectName),
+                ImplicitValue = implicitValue
+            };
         }
 
         public static ObjectBlockSerializer Basic()

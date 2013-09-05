@@ -31,17 +31,17 @@ namespace FubuObjectBlocks
 
         public object Get(string key)
         {
-            var property = _root.FindProperty(key);
+            var property = _root.FindBlock<PropertyBlock>(key);
             if (property == null) return null;
 
-            return property.Block.Value;
+            return property.Value;
         }
 
         public bool HasChild(string key)
         {
             if (!Has(key)) return false;
 
-            return _root.FindProperty(key).Block.Properties.Any();
+            return _root.FindBlock<ObjectBlock>(key) != null;
         }
 
         public IValueSource GetChild(string key)
@@ -51,7 +51,7 @@ namespace FubuObjectBlocks
                 return new SettingsData();
             }
 
-            var child = _root.FindProperty(key).Block;
+            var child = _root.FindBlock<ObjectBlock>(key);
             return new ObjectBlockValues<T>(child, _settings);
         }
 
@@ -63,7 +63,7 @@ namespace FubuObjectBlocks
 
             var collectionType = _settings.FindCollectionType(typeof (T), key);
             var builder = typeof (ObjectValueBuilder<>).CloseAndBuildAs<IObjectValueBuilder>(collectionType);
-            return _root.FindProperty(key).Blocks.Select(x => builder.Build(x, _settings)).ToList();
+            return _root.FindBlock<CollectionItemBlock>(key).Blocks.Select(x => builder.Build(x, _settings)).ToList();
         }
 
         public void WriteReport(IValueReport report)
@@ -73,11 +73,12 @@ namespace FubuObjectBlocks
 
         public bool Value(string key, Action<BindingValue> callback)
         {
-            var implicitValue = _settings.ImplicitValue(typeof(T), _root, key);
+            //TODO: remove half of this check, can probably just right from _root.ImplicitValue if its set
+            var implicitValue = _settings.ImplicitValue(typeof(T), key);
             string value;
-            if (implicitValue != null)
+            if (implicitValue != null && _root.ImplicitValue != null)
             {
-                value = _root.Value;
+                value = _root.ImplicitValue;
             }
             else
             {

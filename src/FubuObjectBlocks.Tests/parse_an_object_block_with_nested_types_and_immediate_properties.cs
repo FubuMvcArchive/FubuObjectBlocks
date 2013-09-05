@@ -14,12 +14,12 @@ namespace FubuObjectBlocks.Tests
         {
             theScenario = ParsingScenario.Create(scenario =>
             {
-                scenario.WriteLine("test1 'immediate value'");
+                scenario.WriteLine("test1: 'immediate value'");
                 scenario.WriteLine("");
                 scenario.WriteLine("nestedType:");
-                scenario.WriteLine("  nestedProperty 'string value'");
+                scenario.WriteLine("  nestedProperty: 'string value'");
                 scenario.WriteLine("");
-                scenario.WriteLine("test2 'another value'");
+                scenario.WriteLine("test2: 'another value'");
             });
         }
 
@@ -29,35 +29,35 @@ namespace FubuObjectBlocks.Tests
             theScenario.Dispose();
         }
 
-        private ObjectBlock theBlock { get { return theScenario.Read(); } }
-        private PropertyBlock[] theProperties { get { return theBlock.Properties.ToArray(); } }
+        private IBlock[] theBlocks { get { return theScenario.Read().Blocks.ToArray(); } }
 
         [Test]
         public void reads_the_first_immediate_property()
         {
-            var property = theProperties[0];
+            var property = theBlocks[0] as PropertyBlock;
+            property.ShouldNotBeNull();
             property.Name.ShouldEqual("test1");
-            property.Block.Value.ShouldEqual("immediate value");
+            property.Value.ShouldEqual("immediate value");
         }
 
         [Test]
         public void reads_the_nested_property()
         {
-            var property = theProperties[1];
-            property.Name.ShouldEqual("nestedType");
+            var nestedObject = theBlocks[1] as ObjectBlock;
+            nestedObject.Name.ShouldEqual("nestedType");
             
-            var properties = property.Block.Properties.ToArray();
+            var properties = nestedObject.GetBlocks<PropertyBlock>().ToArray();
 
             properties[0].Name.ShouldEqual("nestedProperty");
-            properties[0].Block.Value.ShouldEqual("string value");
+            properties[0].Value.ShouldEqual("string value");
         }
 
         [Test]
         public void reads_the_last_immediate_property()
         {
-            var property = theProperties[2];
+            var property = theBlocks[2] as PropertyBlock;
             property.Name.ShouldEqual("test2");
-            property.Block.Value.ShouldEqual("another value");
+            property.Value.ShouldEqual("another value");
         }
     }
 }

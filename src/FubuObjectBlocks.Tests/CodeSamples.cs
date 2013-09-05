@@ -83,6 +83,7 @@ namespace FubuObjectBlocks.Tests
         {
             public SolutionBlockSettings()
             {
+                //Question: calling .ImplicitValue here happens in addition to 
                 Collection(x => x.Feeds)
                     .ExpressAs("feed")
                     .ImplicitValue(x => x.Url);

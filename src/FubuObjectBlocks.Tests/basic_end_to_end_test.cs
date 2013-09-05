@@ -16,12 +16,12 @@ namespace FubuObjectBlocks.Tests
         {
             theScenario = ParsingScenario.Create(scenario =>
             {
-                scenario.WriteLine("name 'Joel'");
-                scenario.WriteLine("email 'joel@arnold.com'");
+                scenario.WriteLine("name: 'Joel'");
+                scenario.WriteLine("email: 'joel@arnold.com'");
                 scenario.WriteLine("");
 
                 scenario.WriteLine("target:");
-                scenario.WriteLine("  url '/test'");
+                scenario.WriteLine("  url: '/test'");
                 scenario.WriteLine("");
 
                 scenario.WriteLine("item 'value1', property: 'test'");

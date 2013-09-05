@@ -1,4 +1,5 @@
-﻿using FubuTestingSupport;
+﻿using System;
+using FubuTestingSupport;
 using NUnit.Framework;
 
 namespace FubuObjectBlocks.Tests
@@ -13,12 +14,17 @@ namespace FubuObjectBlocks.Tests
             var serializer = ObjectBlockSerializer.Basic();
 
             var block = serializer.BlockFor(target, new ObjectBlockSettings());
-            
-            block.FindProperty("Key").Name.ShouldEqual("key");
-            block.FindProperty("Key").Block.Value.ShouldEqual("test");
 
-            block.FindProperty("Value").Name.ShouldEqual("value");
-            block.FindProperty("Value").Block.Value.ShouldEqual("value");
+            Action<string,string> assert = (name,value) =>
+            {
+                var result = block.FindProperty(name);
+                result.ShouldNotBeNull();
+                result.Name.ShouldEqual(name.FirstLetterLowercase());
+                result.Value.ShouldEqual(value);
+            };
+
+            assert("Key", "test");
+            assert("Value", "value");
         }
 
         public class SimpleTarget
