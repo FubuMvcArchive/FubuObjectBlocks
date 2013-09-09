@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace FubuObjectBlocks
 {
-    public class CollectionItemBlock : IBlock
+    public class CollectionBlock : IBlock
     {
         private IList<ObjectBlock> _blocks = new List<ObjectBlock>();
 
-        public CollectionItemBlock(string name)
+        public CollectionBlock(string name)
         {
             Name = name;
         }

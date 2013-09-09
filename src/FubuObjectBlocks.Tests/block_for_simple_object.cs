@@ -11,9 +11,9 @@ namespace FubuObjectBlocks.Tests
         public void sets_the_properties()
         {
             var target = new SimpleTarget {Key = "test", Value = "value"};
-            var serializer = ObjectBlockSerializer.Basic();
+            var writer = ObjectBlockWriter.Basic();
 
-            var block = serializer.BlockFor(target, new ObjectBlockSettings());
+            var block = writer.BlockFor(target);
 
             Action<string,string> assert = (name,value) =>
             {

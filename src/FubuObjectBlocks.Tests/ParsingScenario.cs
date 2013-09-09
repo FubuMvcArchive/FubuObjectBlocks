@@ -22,8 +22,7 @@ namespace FubuObjectBlocks.Tests
 
             _parser = new ObjectBlockParser();
 
-            var formatter = new DisplayFormatter(new InMemoryServiceLocator(), new Stringifier());
-            _serializer = new ObjectBlockSerializer(_parser, ObjectResolver.Basic(), new TypeDescriptorCache(), formatter);
+            _serializer = new ObjectBlockSerializer(_parser, ObjectResolver.Basic());
         }
 
         public string FileName { get { return _fileName; } }

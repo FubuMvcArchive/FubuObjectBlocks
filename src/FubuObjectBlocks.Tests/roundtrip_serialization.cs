@@ -41,8 +41,9 @@ namespace FubuObjectBlocks.Tests
 
 
             var serializer = ObjectBlockSerializer.Basic();
+            var writer = ObjectBlockWriter.Basic();
 
-            var output = serializer.Serialize(solution);
+            var output = writer.Write(solution);
 
             Debug.WriteLine(output);
 

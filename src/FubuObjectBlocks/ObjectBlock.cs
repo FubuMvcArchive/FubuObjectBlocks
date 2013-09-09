@@ -63,9 +63,9 @@ namespace FubuObjectBlocks
             return FindBlock<ObjectBlock>(name);
         }
 
-        public CollectionItemBlock FindCollection(string name)
+        public CollectionBlock FindCollection(string name)
         {
-            return FindBlock<CollectionItemBlock>(name);
+            return FindBlock<CollectionBlock>(name);
         }
 
         public ObjectBlock MakeCollections(IObjectBlockSettings settings)
@@ -80,7 +80,7 @@ namespace FubuObjectBlocks
                 .ToDictionary(x => x.Key, x => x.ToList());
 
             var allItems = items.SelectMany(x => x.Value).ToList();
-            var collections = items.Select(x => new CollectionItemBlock(x.Key) {Blocks = x.Value});
+            var collections = items.Select(x => new CollectionBlock(x.Key) {Blocks = x.Value});
 
             _blocks.RemoveAll(allItems.Contains);
             _blocks.AddRange(collections);

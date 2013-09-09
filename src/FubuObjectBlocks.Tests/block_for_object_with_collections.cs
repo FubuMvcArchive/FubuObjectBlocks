@@ -12,21 +12,21 @@ namespace FubuObjectBlocks.Tests
         public void sets_the_properties()
         {
             var target = new SuperComplexTarget
+            {
+                Name = "test",
+                Feeds = new[]
                 {
-                    Name = "test",
-                    Feeds = new[]
-                        {
-                            new Feed { Url = "http://localhost:8080", Mode = "fixed"},
-                            new Feed { Url = "http://localhost:8181", Mode = "float"}
-                        }
-                };
+                    new Feed { Url = "http://localhost:8080", Mode = "fixed"},
+                    new Feed { Url = "http://localhost:8181", Mode = "float"}
+                }
+            };
 
-            var serializer = ObjectBlockSerializer.Basic();
-            var block = serializer.BlockFor(target, new ObjectBlockSettings());
+            var writer = ObjectBlockWriter.Basic();
+            var block = writer.BlockFor(target);
 
             block.FindBlock<PropertyBlock>("name").Value.ShouldEqual("test");
 
-            var feeds = block.FindBlock<CollectionItemBlock>("feed").Blocks.ToArray();
+            var feeds = block.FindBlock<CollectionBlock>("feed").Blocks.ToArray();
             
             feeds[0].ImplicitValue.ShouldEqual("http://localhost:8080");
             feeds[0].FindBlock<PropertyBlock>("mode").Value.ShouldEqual("fixed");

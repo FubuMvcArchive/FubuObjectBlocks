@@ -63,7 +63,7 @@ namespace FubuObjectBlocks
 
             var collectionType = _settings.FindCollectionType(typeof (T), key);
             var builder = typeof (ObjectValueBuilder<>).CloseAndBuildAs<IObjectValueBuilder>(collectionType);
-            return _root.FindBlock<CollectionItemBlock>(key).Blocks.Select(x => builder.Build(x, _settings)).ToList();
+            return _root.FindBlock<CollectionBlock>(key).Blocks.Select(x => builder.Build(x, _settings)).ToList();
         }
 
         public void WriteReport(IValueReport report)

@@ -68,6 +68,9 @@
     <Compile Include="block_for_object_with_collections.cs" />
     <Compile Include="block_for_object_with_nested_types.cs" />
     <Compile Include="block_for_simple_object.cs" />
+    <Compile Include="Formatting\BlockRegistryTester.cs" />
+    <Compile Include="Formatting\DefaultBlockNamingStrategyTester.cs" />
+    <Compile Include="Formatting\EmptyBlockNamingStrategyTester.cs" />
     <Compile Include="ObjectBlockSettingsTester.cs" />
     <Compile Include="ObjectBlockValuesTester.cs" />
     <Compile Include="parse_an_inline_object_block.cs" />
@@ -82,6 +85,11 @@
     <Compile Include="CodeSamples.cs" />
     <Compile Include="write_a_single_object_block.cs" />
     <Compile Include="write_a_single_object_block_with_nested_values.cs" />
+    <Compile Include="Writing\NestedBlockWriterTester.cs" />
+    <Compile Include="Writing\CollectionBlockWriterTester.cs" />
+    <Compile Include="Writing\WritingTarget.cs" />
+    <Compile Include="Writing\SimpleEnum.cs" />
+    <Compile Include="Writing\SimplePropertyWriterTester.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FubuObjectBlocks\FubuObjectBlocks.csproj">

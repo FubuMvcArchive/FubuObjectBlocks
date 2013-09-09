@@ -90,7 +90,7 @@ namespace FubuObjectBlocks.Tests
             var block2 = new ObjectBlock();
             block2.AddBlock(new PropertyBlock("Url") { Value = "url2" });
 
-            var collection = new CollectionItemBlock("feeds");
+            var collection = new CollectionBlock("feeds");
             collection.AddBlock(block1);
             collection.AddBlock(block2);
             theBlock.AddBlock(collection);
@@ -110,7 +110,7 @@ namespace FubuObjectBlocks.Tests
             var block2 = new ObjectBlock();
             block2.AddBlock(new PropertyBlock("Url") { Value = "url2" });
 
-            var collection = new CollectionItemBlock("feed");
+            var collection = new CollectionBlock("feed");
             collection.AddBlock(block1);
             collection.AddBlock(block2);
             theBlock.AddBlock(collection);

@@ -72,9 +72,9 @@ namespace FubuObjectBlocks.Tests
         public void serialize()
         {
             var solution = new Solution {Options = new SolutionOptions {Name = new SolutionName("test")}};
-            var serializer = ObjectBlockSerializer.Basic();
+            var writer = ObjectBlockWriter.Basic();
 
-            var serializedString = serializer.Serialize(solution);
+            var serializedString = writer.Write(solution);
         }
         // ENDSAMPLE
 
@@ -83,6 +83,7 @@ namespace FubuObjectBlocks.Tests
         {
             public SolutionBlockSettings()
             {
+                //Question: calling .ImplicitValue here happens in addition to 
                 Collection(x => x.Feeds)
                     .ExpressAs("feed")
                     .ImplicitValue(x => x.Url);
@@ -92,9 +93,9 @@ namespace FubuObjectBlocks.Tests
         public void serialize_with_settings()
         {
             var solution = new Solution { Options = new SolutionOptions { Name = new SolutionName("test") } };
-            var serializer = ObjectBlockSerializer.Basic();
+            var writer = ObjectBlockWriter.Basic();
 
-            var serializedString = serializer.Serialize<Solution, SolutionBlockSettings>(solution);
+            var serializedString = writer.Write<Solution, SolutionBlockSettings>(solution);
         }
         // ENDSAMPLE
     }

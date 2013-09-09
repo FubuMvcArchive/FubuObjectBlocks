@@ -10,13 +10,14 @@ namespace FubuObjectBlocks.Tests
         public void sets_the_properties()
         {
             var target = new ComplexTarget
-                {
-                    Name = "test",
-                    Nested = new NestedTarget {Email = "test@test.com"}
-                };
-            var serializer = ObjectBlockSerializer.Basic();
+            {
+                Name = "test",
+                Nested = new NestedTarget {Email = "test@test.com"}
+            };
 
-            var block = serializer.BlockFor(target, new ObjectBlockSettings());
+            var writer = ObjectBlockWriter.Basic();
+
+            var block = writer.BlockFor(target);
 
             block.FindProperty("name").Value.ShouldEqual("test");
 

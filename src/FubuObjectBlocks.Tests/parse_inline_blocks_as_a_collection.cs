@@ -26,12 +26,12 @@ namespace FubuObjectBlocks.Tests
         }
 
 
-        private CollectionItemBlock theCollection
+        private CollectionBlock theCollection
         {
             get
             {
                 var root = theScenario.Read();
-                return root.Blocks.OfType<CollectionItemBlock>().Single();
+                return root.Blocks.OfType<CollectionBlock>().Single();
             }
         }
 
