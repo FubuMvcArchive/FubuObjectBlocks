@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FubuCore;
 using FubuCore.Util;
 using FubuObjectBlocks.Formatting;
 
@@ -21,6 +22,7 @@ namespace FubuObjectBlocks
 
         private readonly IList<IBlockNamingStrategy> _strategies = new List<IBlockNamingStrategy>();
         private readonly Cache<Type, IObjectBlockSettings> _settings = new Cache<Type, IObjectBlockSettings>();
+        private IBlockSorter _sorter;
 
         public BlockRegistry(IEnumerable<IBlockNamingStrategy> strategies)
         {
@@ -50,6 +52,30 @@ namespace FubuObjectBlocks
         public string NameFor(BlockToken token)
         {
             return NamingStrategyFor(token).NameFor(token);
+        }
+
+        public void RegisterSettings(Type type, IObjectBlockSettings settings)
+        {
+            _settings.Fill(type, settings);
+        }
+
+        public void RegisterSettings<T>()
+            where T : IObjectBlockSettings, new()
+        {
+            var settingsType = typeof (T);
+            if (!settingsType.Closes(typeof (ObjectBlockSettings<>)))
+            {
+                throw new InvalidOperationException("Must subclass from ObjectBlockSettings<T>");
+            }
+            
+            var type = settingsType.BaseType.GetGenericTypeDefinition().GetGenericArguments()[0];
+            RegisterSettings(type, new T());
+        }
+
+        public IBlockSorter Sorter
+        {
+            get { return _sorter ?? (_sorter = new BlockSorter()); }
+            set { _sorter = value; }
         }
 
         public IObjectBlockSettings SettingsFor(Type type)

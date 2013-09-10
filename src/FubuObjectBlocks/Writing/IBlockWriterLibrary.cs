@@ -21,6 +21,7 @@ namespace FubuObjectBlocks.Writing
         {
             yield return new PropertyBlockWriter();
             yield return new CollectionBlockWriter();
+            yield return new ImplicitValueBlockWriter();
             
             foreach (var writer in _writers)
             {

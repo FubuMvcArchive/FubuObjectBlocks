@@ -51,6 +51,7 @@
     <Compile Include="BlockSettingsAttribute.cs" />
     <Compile Include="CollectionConfiguration.cs" />
     <Compile Include="CollectionBlock.cs" />
+    <Compile Include="Formatting\IBlockSorter.cs" />
     <Compile Include="Writing\BlockWritingContext.cs" />
     <Compile Include="Formatting\DefaultNamingStrategy.cs" />
     <Compile Include="Formatting\IBlockNamingStrategy.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="NestedObjectBlockParser.cs" />
     <Compile Include="ObjectBlock.cs" />
     <Compile Include="ObjectBlockParser.cs" />
-    <Compile Include="ObjectBlockSerializer.cs" />
+    <Compile Include="ObjectBlockReader.cs" />
     <Compile Include="ObjectBlockSettings.cs" />
     <Compile Include="ObjectBlockValues.cs" />
     <Compile Include="ObjectBlockWriter.cs" />

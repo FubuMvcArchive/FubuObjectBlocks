@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 using FubuCore;
 using FubuCore.Formatting;
 using FubuCore.Reflection;
@@ -24,6 +26,7 @@ namespace FubuObjectBlocks
         public string Write(object input)
         {
             var block = BlockFor(input);
+            block.Sort(_blocks.Sorter);
             return block.ToString();
         }
 
@@ -35,12 +38,8 @@ namespace FubuObjectBlocks
 
         public ObjectBlock BlockFor(object input, BlockWritingContext context, string objectName = null)
         {
-            // TODO -- When it's a value inside of a collection, we need to be able to infer the settings somehow
-            // Maybe inspect the context?
-
             Accessor implicitAccessor = null;
             var type = input.GetType();
-            var settings = _blocks.SettingsFor(type);
 
             if (context.Accessor != null)
             {
@@ -52,13 +51,12 @@ namespace FubuObjectBlocks
                 ? implicitAccessor.GetValue(input).ToString()
                 : null;
 
-
             var properties = _cache.GetPropertiesFor(type).Values;
 
             return new ObjectBlock
             {
                 Blocks = properties
-                    .Where(x => x.GetValue(input, null) != null)
+                    .Where(x => x.GetValue(input, null) != null && !isImplicitValue(x, implicitAccessor))
                     .Select(x =>
                     {
                         context.StartProperty(x);
@@ -76,12 +74,31 @@ namespace FubuObjectBlocks
             };
         }
 
+        private static bool isImplicitValue(PropertyInfo property, Accessor implicitAccessor)
+        {
+            if (implicitAccessor == null) return false;
+            return new SingleProperty(property).Equals(implicitAccessor);
+        }
+
         public static ObjectBlockWriter Basic()
+        {
+            return Basic(BlockRegistry.Basic());
+        }
+
+        public static ObjectBlockWriter Basic(Action<BlockRegistry> configure)
+        {
+            var registry = BlockRegistry.Basic();
+            configure(registry);
+
+            return Basic(registry);
+        }
+
+        public static ObjectBlockWriter Basic(BlockRegistry registry)
         {
             var services = new InMemoryServiceLocator();
             services.Add<IDisplayFormatter>(new DisplayFormatter(services, new Stringifier()));
 
-            return new ObjectBlockWriter(new TypeDescriptorCache(), services, BlockWriterLibrary.Basic(), BlockRegistry.Basic());
+            return new ObjectBlockWriter(new TypeDescriptorCache(), services, BlockWriterLibrary.Basic(), registry);
         }
     }
 }

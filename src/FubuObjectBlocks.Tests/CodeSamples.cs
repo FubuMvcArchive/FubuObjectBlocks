@@ -59,12 +59,12 @@ namespace FubuObjectBlocks.Tests
         {
             var fileSystem = new FileSystem();
             
-            // You can also register IObjectBlockSerializer/ObjectBlockSerializer
+            // You can also register IObjectBlockReader/ObjectBlockReader
             // into your container
-            var serializer = ObjectBlockSerializer.Basic();
+            var reader = ObjectBlockReader.Basic();
 
             var contents = fileSystem.ReadStringFromFile("syntax.txt");
-            var solution = serializer.Deserialize<Solution>(contents);
+            var solution = reader.Read<Solution>(contents);
         }
         // ENDSAMPLE
 

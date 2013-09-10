@@ -40,14 +40,14 @@ namespace FubuObjectBlocks.Tests
             };
 
 
-            var serializer = ObjectBlockSerializer.Basic();
+            var reader = ObjectBlockReader.Basic();
             var writer = ObjectBlockWriter.Basic();
 
             var output = writer.Write(solution);
 
             Debug.WriteLine(output);
 
-            var newSolution = serializer.Deserialize<Solution>(output);
+            var newSolution = reader.Read<Solution>(output);
 
             newSolution.ShouldEqual(solution);
         }

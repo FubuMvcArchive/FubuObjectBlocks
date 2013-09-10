@@ -13,7 +13,8 @@ namespace FubuObjectBlocks.Tests
         private readonly string _fileName;
         private readonly IFileSystem _files;
         private readonly IObjectBlockParser _parser;
-        private readonly ObjectBlockSerializer _serializer;
+        private readonly ObjectBlockReader _reader;
+        private readonly BlockRegistry _blockRegistry;
 
         public ParsingScenario(string fileName)
         {
@@ -22,7 +23,8 @@ namespace FubuObjectBlocks.Tests
 
             _parser = new ObjectBlockParser();
 
-            _serializer = new ObjectBlockSerializer(_parser, ObjectResolver.Basic());
+            _blockRegistry = BlockRegistry.Basic();
+            _reader = new ObjectBlockReader(_parser, ObjectResolver.Basic(), _blockRegistry);
         }
 
         public string FileName { get { return _fileName; } }
@@ -39,13 +41,14 @@ namespace FubuObjectBlocks.Tests
 
         public T Read<T>()
         {
-            return _serializer.Deserialize<T>(readFile());
+            return _reader.Read<T>(readFile());
         }
 
         public T Read<T, TMap>()
             where TMap : ObjectBlockSettings<T>, new()
         {
-            return _serializer.Deserialize<T, TMap>(readFile());
+            _blockRegistry.RegisterSettings<TMap>();
+            return _reader.Read<T>(readFile());
         }
 
         public static ParsingScenario Create(Action<ScenarioDefinition> configure)

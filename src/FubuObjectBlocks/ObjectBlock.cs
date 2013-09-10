@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FubuCore;
+using FubuObjectBlocks.Formatting;
 
 namespace FubuObjectBlocks
 {
@@ -68,6 +69,15 @@ namespace FubuObjectBlocks
             return FindBlock<CollectionBlock>(name);
         }
 
+        public void Sort(IBlockSorter sorter)
+        {
+            var blocks = _blocks.ToArray();
+            
+            _blocks.Clear();
+
+            _blocks.AddRange(sorter.Sort(blocks));
+        }
+
         public ObjectBlock MakeCollections(IObjectBlockSettings settings)
         {
             var collectionNames = settings.KnownCollectionNames().ToList();
@@ -106,8 +116,27 @@ namespace FubuObjectBlocks
                 : new string[] {};
             var nextIndentAmount = hasName ? indent + 1 : indent;
 
+            var blocks = new List<string>();
+            for (var i = 0; i < _blocks.Count; ++i)
+            {
+                var block = _blocks[i];
+                blocks.Add(block.ToString(nextIndentAmount));
+
+                var nextIndex = i + 1;
+                if (nextIndex < _blocks.Count)
+                {
+                    // starting a collection
+                    var currentCollection = block as CollectionBlock;
+                    var next = _blocks[nextIndex] as CollectionBlock;
+                    if (next != null && (currentCollection == null || currentCollection.Name != next.Name))
+                    {
+                        blocks.Add("");
+                    }
+                }
+            }
+
             return objectTitle
-                .Concat(Blocks.Select(x => x.ToString(nextIndentAmount)))
+                .Concat(blocks)
                 .Join(Environment.NewLine);
         }
     }
