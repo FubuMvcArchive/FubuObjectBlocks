@@ -23,29 +23,35 @@ namespace FubuObjectBlocks
 
         public string Write(object input)
         {
-            return Write(input, new ObjectBlockSettings());
-        }
-
-        public string Write<T, TMap>(T input) where TMap : ObjectBlockSettings<T>, new()
-        {
-            return Write(input, new TMap());
-        }
-
-        public string Write(object input, IObjectBlockSettings settings)
-        {
             var block = BlockFor(input);
             return block.ToString();
         }
 
         public ObjectBlock BlockFor(object input, string objectName = null)
         {
+            var context = new BlockWritingContext(_services, this, _blocks, input);
+            return BlockFor(input, context, objectName);
+        }
+
+        public ObjectBlock BlockFor(object input, BlockWritingContext context, string objectName = null)
+        {
+            // TODO -- When it's a value inside of a collection, we need to be able to infer the settings somehow
+            // Maybe inspect the context?
+
+            Accessor implicitAccessor = null;
             var type = input.GetType();
             var settings = _blocks.SettingsFor(type);
-            var implicitAccessor = settings.FindImplicitValue(type);
+
+            if (context.Accessor != null)
+            {
+                var parentSettings = _blocks.SettingsFor(context.Accessor.OwnerType);
+                implicitAccessor = parentSettings.FindImplicitValue(type);
+            }
 
             var implicitValue = implicitAccessor != null
                 ? implicitAccessor.GetValue(input).ToString()
                 : null;
+
 
             var properties = _cache.GetPropertiesFor(type).Values;
 
@@ -55,17 +61,20 @@ namespace FubuObjectBlocks
                     .Where(x => x.GetValue(input, null) != null)
                     .Select(x =>
                     {
-                        var name = new BlockName(new SingleProperty(x));
-                        var context = new BlockWritingContext(_services, this, _blocks, name, input);
-                        var writer = _writerLibrary.WriterFor(context);
+                        context.StartProperty(x);
 
-                        return writer.Write(context);
+                        var writer = _writerLibrary.WriterFor(context);
+                        var block = writer.Write(context);
+
+                        context.FinishProperty();
+
+                        return block;
+
                     }).ToList(),
-                Name = _blocks.NameFor(new BlockName(objectName)),
+                Name = _blocks.NameFor(new BlockToken(objectName)),
                 ImplicitValue = implicitValue
             };
         }
-
 
         public static ObjectBlockWriter Basic()
         {

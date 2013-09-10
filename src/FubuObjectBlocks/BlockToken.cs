@@ -2,24 +2,24 @@
 
 namespace FubuObjectBlocks
 {
-    public class BlockName
+    public class BlockToken
     {
-        public static readonly BlockName Empty = new BlockName((string)null);
+        public static readonly BlockToken Empty = new BlockToken((string)null);
 
         private readonly string _value;
         private readonly Accessor _accessor;
 
-        public BlockName(string value)
+        public BlockToken(string value)
             : this(value, null)
         {
         }
 
-        public BlockName(Accessor accessor)
+        public BlockToken(Accessor accessor)
             : this(accessor.Name, accessor)
         {
         }
 
-        public BlockName(string value, Accessor accessor)
+        public BlockToken(string value, Accessor accessor)
         {
             _value = value;
             _accessor = accessor;
@@ -40,7 +40,7 @@ namespace FubuObjectBlocks
             return Empty.Equals(this);
         }
 
-        protected bool Equals(BlockName other)
+        protected bool Equals(BlockToken other)
         {
             return string.Equals(_value, other._value) && Equals(_accessor, other._accessor);
         }
@@ -50,7 +50,7 @@ namespace FubuObjectBlocks
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((BlockName) obj);
+            return Equals((BlockToken) obj);
         }
 
         public override int GetHashCode()

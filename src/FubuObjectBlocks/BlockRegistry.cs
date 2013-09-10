@@ -42,14 +42,14 @@ namespace FubuObjectBlocks
             }
         }
 
-        public IBlockNamingStrategy NamingStrategyFor(BlockName name)
+        public IBlockNamingStrategy NamingStrategyFor(BlockToken token)
         {
-            return AllNamingStrategies().FirstOrDefault(x => x.Matches(name));
+            return AllNamingStrategies().FirstOrDefault(x => x.Matches(token));
         }
 
-        public string NameFor(BlockName name)
+        public string NameFor(BlockToken token)
         {
-            return NamingStrategyFor(name).NameFor(name);
+            return NamingStrategyFor(token).NameFor(token);
         }
 
         public IObjectBlockSettings SettingsFor(Type type)

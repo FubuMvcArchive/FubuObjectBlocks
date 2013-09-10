@@ -12,25 +12,25 @@ namespace FubuObjectBlocks.Tests.Formatting
         [Test]
         public void matches_non_null()
         {
-            theStrategy.Matches(new BlockName("test")).ShouldBeTrue();
+            theStrategy.Matches(new BlockToken("test")).ShouldBeTrue();
         }
 
         [Test]
         public void no_match_for_empty()
         {
-            theStrategy.Matches(BlockName.Empty).ShouldBeFalse();
+            theStrategy.Matches(BlockToken.Empty).ShouldBeFalse();
         }
 
         [Test]
         public void formats_camel_case_single_word()
         {
-            theStrategy.NameFor(new BlockName("Test")).ShouldEqual("test");
+            theStrategy.NameFor(new BlockToken("Test")).ShouldEqual("test");
         }
 
         [Test]
         public void formats_camel_case_multi_word()
         {
-            theStrategy.NameFor(new BlockName("TestProperty")).ShouldEqual("testProperty");
+            theStrategy.NameFor(new BlockToken("TestProperty")).ShouldEqual("testProperty");
         }
     }
 }

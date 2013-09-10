@@ -14,11 +14,11 @@ namespace FubuObjectBlocks.Writing
 
         public IBlock Write(BlockWritingContext context)
         {
-            var type = context.Name.Accessor.OwnerType;
+            var type = context.Token.Accessor.OwnerType;
             var settings = context.Registry.SettingsFor(type);
-            var name = settings.Collection(type, context.Name.Value);
+            var name = settings.Collection(type, context.Token.Value);
 
-            var collectionName = context.Registry.NameFor(new BlockName(name));
+            var collectionName = context.Registry.NameFor(new BlockToken(name));
             
             IEnumerable<object> items = new object[0];
 
@@ -31,7 +31,15 @@ namespace FubuObjectBlocks.Writing
             return new CollectionBlock(collectionName)
             {
                 Blocks = items
-                    .Select(value => context.Writer.BlockFor(value, context.Name.Value))
+                    .Select(value =>
+                    {
+                        context.StartObject(value);
+                        var block = context.Writer.BlockFor(value, context, context.Token.Value);
+
+                        context.FinishObject();
+
+                        return block;
+                    })
                     .ToList()
             };
         }

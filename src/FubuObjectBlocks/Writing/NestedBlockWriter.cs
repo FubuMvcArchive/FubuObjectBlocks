@@ -9,7 +9,7 @@
 
         public IBlock Write(BlockWritingContext context)
         {
-            return context.Writer.BlockFor(context.RawValue, context.Name.Value);
+            return context.Writer.BlockFor(context.RawValue, context.Token.Value);
         }
     }
 }

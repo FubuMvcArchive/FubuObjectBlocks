@@ -12,13 +12,13 @@ namespace FubuObjectBlocks.Tests.Formatting
         [Test]
         public void matches_empty()
         {
-            theStrategy.Matches(BlockName.Empty).ShouldBeTrue();
+            theStrategy.Matches(BlockToken.Empty).ShouldBeTrue();
         }
 
         [Test]
         public void formats_as_null()
         {
-            theStrategy.NameFor(BlockName.Empty).ShouldBeNull();
+            theStrategy.NameFor(BlockToken.Empty).ShouldBeNull();
         }
     }
 }

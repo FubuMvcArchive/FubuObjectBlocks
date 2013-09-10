@@ -6,7 +6,7 @@ namespace FubuObjectBlocks.Writing
     {
         public bool Matches(BlockWritingContext context)
         {
-            return context.Accessor.PropertyType.IsSimple() || context.Accessor.PropertyType == typeof(decimal);
+            return context.MatchesAccessor(x => x.PropertyType.IsSimple() || x.PropertyType == typeof (decimal));
         }
 
         public IBlock Write(BlockWritingContext context)

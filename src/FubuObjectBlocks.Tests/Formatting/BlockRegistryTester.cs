@@ -11,7 +11,7 @@ namespace FubuObjectBlocks.Tests.Formatting
         [Test]
         public void custom_naming_strategy()
         {
-            var name = new BlockName("test");
+            var name = new BlockToken("test");
 
             var strategy = MockRepository.GenerateStub<IBlockNamingStrategy>();
             strategy.Stub(x => x.Matches(name)).Return(true);
@@ -23,7 +23,7 @@ namespace FubuObjectBlocks.Tests.Formatting
         [Test]
         public void default_naming_strategy()
         {
-            var name = new BlockName("test");
+            var name = new BlockToken("test");
 
             var strategy = MockRepository.GenerateStub<IBlockNamingStrategy>();
             strategy.Stub(x => x.Matches(name)).Return(false);

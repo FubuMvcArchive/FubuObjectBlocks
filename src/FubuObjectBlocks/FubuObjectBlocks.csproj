@@ -46,7 +46,7 @@
     <Compile Include="BlockAccumulator.cs" />
     <Compile Include="BlockExtensions.cs" />
     <Compile Include="BlockIndenter.cs" />
-    <Compile Include="BlockName.cs" />
+    <Compile Include="BlockToken.cs" />
     <Compile Include="BlockRegistry.cs" />
     <Compile Include="BlockSettingsAttribute.cs" />
     <Compile Include="CollectionConfiguration.cs" />

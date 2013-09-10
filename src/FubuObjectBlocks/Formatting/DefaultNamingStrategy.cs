@@ -2,14 +2,14 @@ namespace FubuObjectBlocks.Formatting
 {
     public class DefaultBlockNamingStrategy : IBlockNamingStrategy
     {
-        public bool Matches(BlockName name)
+        public bool Matches(BlockToken token)
         {
-            return !name.IsEmpty();
+            return !token.IsEmpty();
         }
 
-        public string NameFor(BlockName name)
+        public string NameFor(BlockToken token)
         {
-            var blockName = name.Value;
+            var blockName = token.Value;
             return blockName.Substring(0, 1).ToLower() + blockName.Substring(1);
         }
     }

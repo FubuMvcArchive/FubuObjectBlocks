@@ -2,7 +2,7 @@
 {
     public interface IBlockNamingStrategy
     {
-        bool Matches(BlockName name);
-        string NameFor(BlockName blockName);
+        bool Matches(BlockToken token);
+        string NameFor(BlockToken blockToken);
     }
 }

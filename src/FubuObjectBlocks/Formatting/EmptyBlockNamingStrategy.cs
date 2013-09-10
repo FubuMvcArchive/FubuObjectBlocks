@@ -2,12 +2,12 @@ namespace FubuObjectBlocks.Formatting
 {
     public class EmptyBlockNamingStrategy : IBlockNamingStrategy
     {
-        public bool Matches(BlockName name)
+        public bool Matches(BlockToken token)
         {
-            return name.IsEmpty();
+            return token.IsEmpty();
         }
 
-        public string NameFor(BlockName blockName)
+        public string NameFor(BlockToken blockToken)
         {
             return null;
         }

@@ -92,10 +92,7 @@ namespace FubuObjectBlocks.Tests
 
         public void serialize_with_settings()
         {
-            var solution = new Solution { Options = new SolutionOptions { Name = new SolutionName("test") } };
-            var writer = ObjectBlockWriter.Basic();
-
-            var serializedString = writer.Write<Solution, SolutionBlockSettings>(solution);
+            
         }
         // ENDSAMPLE
     }
