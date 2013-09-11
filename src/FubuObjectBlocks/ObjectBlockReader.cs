@@ -1,4 +1,5 @@
-﻿using FubuCore;
+﻿using System;
+using FubuCore;
 using FubuCore.Binding;
 
 namespace FubuObjectBlocks
@@ -32,7 +33,20 @@ namespace FubuObjectBlocks
 
         public static ObjectBlockReader Basic()
         {
-            return new ObjectBlockReader(new ObjectBlockParser(), ObjectResolver.Basic(), BlockRegistry.Basic());
+            return Basic(BlockRegistry.Basic());
+        }
+
+        public static ObjectBlockReader Basic(Action<BlockRegistry> configure)
+        {
+            var registry = BlockRegistry.Basic();
+            configure(registry);
+
+            return Basic(registry);
+        }
+
+        public static ObjectBlockReader Basic(BlockRegistry registry)
+        {
+            return new ObjectBlockReader(new ObjectBlockParser(), ObjectResolver.Basic(), registry);
         }
     }
 }
