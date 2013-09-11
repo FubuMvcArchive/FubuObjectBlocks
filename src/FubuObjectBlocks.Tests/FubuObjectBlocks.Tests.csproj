@@ -85,6 +85,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="roundtrip_serialization.cs" />
     <Compile Include="CodeSamples.cs" />
+    <Compile Include="Settings\IntegratedObjectBlockSettingsProviderTester.cs" />
+    <Compile Include="Settings\ObjectBlockCollectionTester.cs" />
+    <Compile Include="Settings\ObjectBlockFileSourceTester.cs" />
+    <Compile Include="Settings\settings_data_parsing_smoke_test.cs" />
     <Compile Include="write_a_single_object_block.cs" />
     <Compile Include="write_a_single_object_block_with_nested_values.cs" />
     <Compile Include="Writing\NestedBlockWriterTester.cs" />

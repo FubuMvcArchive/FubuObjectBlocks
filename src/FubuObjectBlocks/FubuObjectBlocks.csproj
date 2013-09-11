@@ -52,6 +52,11 @@
     <Compile Include="CollectionConfiguration.cs" />
     <Compile Include="CollectionBlock.cs" />
     <Compile Include="Formatting\IBlockSorter.cs" />
+    <Compile Include="Settings\IObjectBlockSource.cs" />
+    <Compile Include="Settings\ObjectBlockCollection.cs" />
+    <Compile Include="Settings\ObjectBlockFileSettings.cs" />
+    <Compile Include="Settings\ObjectBlockFileSource.cs" />
+    <Compile Include="Settings\ObjectBlockSettingsProvider.cs" />
     <Compile Include="Writing\BlockWritingContext.cs" />
     <Compile Include="Formatting\DefaultNamingStrategy.cs" />
     <Compile Include="Formatting\IBlockNamingStrategy.cs" />
@@ -64,7 +69,6 @@
     <Compile Include="IObjectBlockSerializer.cs" />
     <Compile Include="IObjectBlockSettings.cs" />
     <Compile Include="IObjectBlockWriter.cs" />
-    <Compile Include="IObjectValueBuilder.cs" />
     <Compile Include="NestedObjectBlockParser.cs" />
     <Compile Include="ObjectBlock.cs" />
     <Compile Include="ObjectBlockParser.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="Writing\NestedBlockWriter.cs" />
     <Compile Include="Writing\PropertyBlockWriter.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

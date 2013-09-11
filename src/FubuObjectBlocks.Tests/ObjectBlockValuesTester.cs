@@ -11,13 +11,13 @@ namespace FubuObjectBlocks.Tests
     public class ObjectBlockValuesTester
     {
         private ObjectBlock theBlock;
-        private ObjectBlockValues<Solution> theValues;
+        private ObjectBlockValues theValues;
 
         [SetUp]
         public void SetUp()
         {
             theBlock = new ObjectBlock();
-            theValues = new ObjectBlockValues<Solution>(theBlock);
+            theValues = new ObjectBlockValues(theBlock, typeof(Solution));
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace FubuObjectBlocks.Tests
             collection.AddBlock(block2);
             theBlock.AddBlock(collection);
 
-            var mappedValueSource = new ObjectBlockValues<Solution>(theBlock, new FeedObjectSettings());
+            var mappedValueSource = new ObjectBlockValues(theBlock, new FeedObjectSettings(), typeof(Solution));
 
             var values = mappedValueSource.GetChildren("Feeds").ToArray();
 
@@ -131,7 +131,7 @@ namespace FubuObjectBlocks.Tests
                 ImplicitValue = "http://www.google.com"
             };
 
-            var mappedValueSource = new ObjectBlockValues<FeedObject>(feedBlock, new FeedObjectSettings());
+            var mappedValueSource = new ObjectBlockValues(feedBlock, new FeedObjectSettings(), typeof(FeedObject));
 
             var value = "";
             mappedValueSource.Value("Url", x =>

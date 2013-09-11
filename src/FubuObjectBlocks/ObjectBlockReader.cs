@@ -19,11 +19,23 @@ namespace FubuObjectBlocks
 
         public T Read<T>(string input)
         {
-            var settings = _blocks.SettingsFor(typeof (T));
-            var block = _parser.Parse(input, settings);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block, settings));
+            return Read(typeof(T), input).As<T>();
+        }
 
-            return result.Value.As<T>();
+        public object Read(Type type, string input)
+        {
+            var settings = _blocks.SettingsFor(type);
+            var block = _parser.Parse(input, settings);
+
+            return Read(type, block);
+        }
+
+        public object Read(Type type, ObjectBlock block)
+        {
+            var settings = _blocks.SettingsFor(type);
+            var result = _resolver.BindModel(type, new ObjectBlockValues(block, settings, type));
+
+            return result.Value;
         }
 
         public ObjectBlock Read(string input)

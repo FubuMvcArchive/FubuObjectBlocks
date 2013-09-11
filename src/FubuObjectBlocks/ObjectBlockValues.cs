@@ -8,20 +8,22 @@ using FubuCore.Configuration;
 
 namespace FubuObjectBlocks
 {
-    public class ObjectBlockValues<T> : IValueSource
+    public class ObjectBlockValues : IValueSource
     {
+        private readonly Type _type;
         private readonly ObjectBlock _root;
         private readonly IObjectBlockSettings _settings;
         
-        public ObjectBlockValues(ObjectBlock root)
-            : this(root, new ObjectBlockSettings())
+        public ObjectBlockValues(ObjectBlock root, Type type)
+            : this(root, new ObjectBlockSettings(), type)
         {
         }
 
-        public ObjectBlockValues(ObjectBlock root, IObjectBlockSettings settings)
+        public ObjectBlockValues(ObjectBlock root, IObjectBlockSettings settings, Type type)
         {
             _root = root;
             _settings = settings;
+            _type = type;
         }
 
         public bool Has(string key)
@@ -52,18 +54,21 @@ namespace FubuObjectBlocks
             }
 
             var child = _root.FindBlock<ObjectBlock>(key);
-            return new ObjectBlockValues<T>(child, _settings);
+            return new ObjectBlockValues(child, _settings, _type);
         }
 
         public IEnumerable<IValueSource> GetChildren(string key)
         {
-            key = _settings.Collection(typeof(T), key);
+            key = _settings.Collection(_type, key);
 
             if (!Has(key)) return Enumerable.Empty<IValueSource>();
 
-            var collectionType = _settings.FindCollectionType(typeof (T), key);
-            var builder = typeof (ObjectValueBuilder<>).CloseAndBuildAs<IObjectValueBuilder>(collectionType);
-            return _root.FindBlock<CollectionBlock>(key).Blocks.Select(x => builder.Build(x, _settings)).ToList();
+            var collectionType = _settings.FindCollectionType(_type, key);
+            return _root
+                .FindBlock<CollectionBlock>(key)
+                .Blocks
+                .Select(x => new ObjectBlockValues(x, _settings, collectionType))
+                .ToList();
         }
 
         public void WriteReport(IValueReport report)
@@ -74,7 +79,7 @@ namespace FubuObjectBlocks
         public bool Value(string key, Action<BindingValue> callback)
         {
             //TODO: remove half of this check, can probably just right from _root.ImplicitValue if its set
-            var implicitValue = _settings.ImplicitValue(typeof(T), key);
+            var implicitValue = _settings.ImplicitValue(_type, key);
             string value;
             if (implicitValue != null && _root.ImplicitValue != null)
             {
@@ -86,10 +91,8 @@ namespace FubuObjectBlocks
                 value = Get(key) as string;
             }
 
-            
-
-            callback(new BindingValue()
-            {
+            callback(new BindingValue
+                {
                 RawKey = key,
                 RawValue = value,
                 Source = Provenance
