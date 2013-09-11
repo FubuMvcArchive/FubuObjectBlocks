@@ -68,8 +68,11 @@ namespace FubuObjectBlocks
                 throw new InvalidOperationException("Must subclass from ObjectBlockSettings<T>");
             }
             
-            var type = settingsType.BaseType.GetGenericTypeDefinition().GetGenericArguments()[0];
-            RegisterSettings(type, new T());
+            var type = settingsType.BaseType.GetGenericArguments()[0];
+            var settings = new T().As<ObjectBlockSettings>();
+            settings.Include(type);
+
+            RegisterSettings(type, settings);
         }
 
         public IBlockSorter Sorter

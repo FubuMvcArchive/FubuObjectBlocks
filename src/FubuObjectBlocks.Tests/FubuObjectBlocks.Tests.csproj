@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="basic_end_to_end_test.cs" />
+    <Compile Include="BlockSorterTester.cs" />
     <Compile Include="block_for_object_with_collections.cs" />
     <Compile Include="block_for_object_with_nested_types.cs" />
     <Compile Include="block_for_simple_object.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Formatting\DefaultBlockNamingStrategyTester.cs" />
     <Compile Include="Formatting\EmptyBlockNamingStrategyTester.cs" />
     <Compile Include="ObjectBlockSettingsTester.cs" />
+    <Compile Include="ObjectBlockTester.cs" />
     <Compile Include="ObjectBlockValuesTester.cs" />
     <Compile Include="parse_an_inline_object_block.cs" />
     <Compile Include="parse_an_object_block_with_nested_types_and_immediate_properties.cs" />

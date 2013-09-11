@@ -20,7 +20,7 @@ namespace FubuObjectBlocks
         {
             var settings = _blocks.SettingsFor(typeof (T));
             var block = _parser.Parse(input, settings);
-            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block));
+            var result = _resolver.BindModel(typeof(T), new ObjectBlockValues<T>(block, settings));
 
             return result.Value.As<T>();
         }
