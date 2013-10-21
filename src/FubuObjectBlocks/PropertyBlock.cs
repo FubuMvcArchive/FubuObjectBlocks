@@ -1,4 +1,5 @@
-﻿using FubuCore;
+﻿using System;
+using FubuCore;
 
 namespace FubuObjectBlocks
 {
@@ -19,7 +20,17 @@ namespace FubuObjectBlocks
 
         public string ToString(int indent)
         {
-            return BlockIndenter.Indent("{0}: '{1}'".ToFormat(Name, Value), indent);
+            return ToString(indent, true);
+        }
+
+        public string ToString(int indent, bool endLine)
+        {
+            if (!endLine)
+            {
+                return BlockIndenter.Indent("{0}: '{1}'".ToFormat(Name, Value), indent);
+            }
+
+            return BlockIndenter.Indent("{0}: '{1}'{2}".ToFormat(Name, Value, Environment.NewLine), indent);
         }
     }
 }

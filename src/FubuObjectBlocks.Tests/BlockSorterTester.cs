@@ -83,8 +83,13 @@ namespace FubuObjectBlocks.Tests
             nestedProperties[0].Name.ShouldEqual("Prop3");
             nestedProperties[1].Name.ShouldEqual("Prop5");
 
-            blocks[4].Name.ShouldEqual("Collection1");
-            blocks[5].Name.ShouldEqual("Collection3");
+            blocks[4].Name.ShouldEqual(""); // separator
+
+            blocks[5].Name.ShouldEqual("Collection1");
+
+            blocks[6].Name.ShouldEqual(""); // separator
+
+            blocks[7].Name.ShouldEqual("Collection3");
         }
     }
 }

@@ -46,11 +46,13 @@
     <Compile Include="BlockAccumulator.cs" />
     <Compile Include="BlockExtensions.cs" />
     <Compile Include="BlockIndenter.cs" />
+    <Compile Include="BlockSeparator.cs" />
     <Compile Include="BlockToken.cs" />
     <Compile Include="BlockRegistry.cs" />
     <Compile Include="BlockSettingsAttribute.cs" />
     <Compile Include="CollectionConfiguration.cs" />
     <Compile Include="CollectionBlock.cs" />
+    <Compile Include="Formatting\BlockSorter.cs" />
     <Compile Include="Formatting\IBlockSorter.cs" />
     <Compile Include="IIgnoreAccessorPolicy.cs" />
     <Compile Include="Settings\IObjectBlockSource.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Writing\CollectionBlockWriter.cs" />
     <Compile Include="Writing\IBlockWriter.cs" />
     <Compile Include="Writing\IBlockWriterLibrary.cs" />
+    <Compile Include="Writing\ImplicitValueBlockWriter.cs" />
     <Compile Include="Writing\NestedBlockWriter.cs" />
     <Compile Include="Writing\PropertyBlockWriter.cs" />
   </ItemGroup>

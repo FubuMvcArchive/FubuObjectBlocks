@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FubuCore;
 using FubuCore.Binding;
 using FubuCore.Binding.Values;
 using FubuCore.Configuration;

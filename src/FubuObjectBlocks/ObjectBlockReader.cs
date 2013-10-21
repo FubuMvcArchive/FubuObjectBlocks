@@ -1,6 +1,7 @@
 ﻿using System;
 using FubuCore;
 using FubuCore.Binding;
+using FubuCore.Binding.InMemory;
 
 namespace FubuObjectBlocks
 {
@@ -8,18 +9,30 @@ namespace FubuObjectBlocks
     {
         private readonly IObjectBlockParser _parser;
         private readonly IObjectResolver _resolver;
+        private readonly IServiceLocator _services;
         private readonly BlockRegistry _blocks;
 
-        public ObjectBlockReader(IObjectBlockParser parser, IObjectResolver resolver, BlockRegistry blocks)
+        public ObjectBlockReader(IObjectBlockParser parser, IObjectResolver resolver, IServiceLocator services, BlockRegistry blocks)
         {
             _parser = parser;
             _resolver = resolver;
+            _services = services;
             _blocks = blocks;
         }
 
         public T Read<T>(string input)
         {
             return Read(typeof(T), input).As<T>();
+        }
+
+        public void Read<T>(T target, string input)
+        {
+            var settings = _blocks.SettingsFor(typeof(T));
+            var block = _parser.Parse(input, settings);
+            var data = new RequestData(new ObjectBlockValues(block, settings, typeof (T)));
+            var context = new BindingContext(data, _services, new NulloBindingLogger());
+
+            _resolver.BindProperties(target, context);
         }
 
         public object Read(Type type, string input)
@@ -58,7 +71,7 @@ namespace FubuObjectBlocks
 
         public static ObjectBlockReader Basic(BlockRegistry registry)
         {
-            return new ObjectBlockReader(new ObjectBlockParser(), ObjectResolver.Basic(), registry);
+            return new ObjectBlockReader(new ObjectBlockParser(), ObjectResolver.Basic(), new InMemoryServiceLocator(), registry);
         }
     }
 }

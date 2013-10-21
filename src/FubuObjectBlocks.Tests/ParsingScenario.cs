@@ -24,7 +24,7 @@ namespace FubuObjectBlocks.Tests
             _parser = new ObjectBlockParser();
 
             _blockRegistry = BlockRegistry.Basic();
-            _reader = new ObjectBlockReader(_parser, ObjectResolver.Basic(), _blockRegistry);
+            _reader = new ObjectBlockReader(_parser, ObjectResolver.Basic(), new InMemoryServiceLocator(), _blockRegistry);
         }
 
         public string FileName { get { return _fileName; } }

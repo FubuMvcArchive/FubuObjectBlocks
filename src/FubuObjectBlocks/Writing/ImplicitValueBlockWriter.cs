@@ -1,12 +1,12 @@
-﻿using FubuCore;
+﻿using FubuCore.Reflection;
 
 namespace FubuObjectBlocks.Writing
 {
-    public class PropertyBlockWriter : IBlockWriter
+    public class ImplicitValueBlockWriter : IBlockWriter
     {
         public bool Matches(BlockWritingContext context)
         {
-            return context.MatchesAccessor(x => x.PropertyType.IsSimple() || x.PropertyType == typeof (decimal));
+            return context.MatchesAccessor(x => x.HasAttribute<ImplicitValueAttribute>());
         }
 
         public IBlock Write(BlockWritingContext context)

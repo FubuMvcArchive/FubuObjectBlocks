@@ -24,6 +24,11 @@ namespace FubuObjectBlocks
         private readonly Cache<Type, IObjectBlockSettings> _settings = new Cache<Type, IObjectBlockSettings>();
         private IBlockSorter _sorter;
 
+        public BlockRegistry()
+            : this(new IBlockNamingStrategy[0])
+        {
+        }
+
         public BlockRegistry(IEnumerable<IBlockNamingStrategy> strategies)
         {
             _strategies.AddRange(strategies);

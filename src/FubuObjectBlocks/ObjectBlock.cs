@@ -75,6 +75,8 @@ namespace FubuObjectBlocks
             
             _blocks.Clear();
 
+            blocks.RemoveAll(x => x is BlockSeparator);
+
             _blocks.AddRange(sorter.Sort(blocks));
         }
 
@@ -103,7 +105,7 @@ namespace FubuObjectBlocks
             //TODO: one line summary not valid if there is no Name
             var nameAndValue = "{0} '{1}'".ToFormat(collectionName ?? Name, ImplicitValue);
             var content = new[] {nameAndValue}
-                .Concat(GetBlocks<PropertyBlock>().Select(p => p.ToString()))
+                .Concat(GetBlocks<PropertyBlock>().Select(p => p.ToString(0, false)))
                 .Join(", ");
             return "{0}{1}".ToFormat(BlockIndenter.Indent(content, indent), Environment.NewLine);
         }
@@ -116,28 +118,8 @@ namespace FubuObjectBlocks
                 : new string[] {};
             var nextIndentAmount = hasName ? indent + 1 : indent;
 
-            var blocks = new List<string>();
-            for (var i = 0; i < _blocks.Count; ++i)
-            {
-                var block = _blocks[i];
-                blocks.Add(block.ToString(nextIndentAmount));
-
-                var nextIndex = i + 1;
-                if (nextIndex < _blocks.Count)
-                {
-                    // starting a collection
-                    var currentCollection = block as CollectionBlock;
-                    var next = _blocks[nextIndex] as CollectionBlock;
-                    if (next != null && (currentCollection == null || currentCollection.Name != next.Name))
-                    {
-                        blocks.Add("");
-                    }
-                }
-            }
-
-            return objectTitle
-                .Concat(blocks)
-                .Join(Environment.NewLine);
+            var values = objectTitle.Concat(Blocks.Select(x => x.ToString(nextIndentAmount)));
+            return values.Join(string.Empty);
         }
     }
 }
