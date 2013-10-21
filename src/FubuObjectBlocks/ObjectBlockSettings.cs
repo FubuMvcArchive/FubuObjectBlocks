@@ -10,24 +10,27 @@ namespace FubuObjectBlocks
 {
     public class ObjectBlockSettings : IObjectBlockSettings
     {
-        private readonly TypeDescriptorCache Cache;
-        private readonly Cache<Accessor, CollectionConfiguration> ByAccessor;
-        private readonly Cache<Type, IList<CollectionConfiguration>> CollectionsFor;
+        private readonly TypeDescriptorCache _cache;
+        private readonly Cache<Accessor, CollectionConfiguration> _byAccessor;
+        private readonly Cache<Type, IList<CollectionConfiguration>> _collectionsFor;
+        private readonly List<IIgnoreAccessorPolicy> _ignored;
 
         public ObjectBlockSettings()
         {
-            Cache = new TypeDescriptorCache();
+            _cache = new TypeDescriptorCache();
 
-            ByAccessor = new Cache<Accessor, CollectionConfiguration>(
+            _ignored = new List<IIgnoreAccessorPolicy>();
+
+            _byAccessor = new Cache<Accessor, CollectionConfiguration>(
                 x => x.InnerProperty.HasAttribute<BlockSettingsAttribute>()
                     ? x.ToCollectionConfiguration()
                     : new CollectionConfiguration(x));
 
-            CollectionsFor = new Cache<Type, IList<CollectionConfiguration>>(
-                type => Cache.GetPropertiesFor(type)
+            _collectionsFor = new Cache<Type, IList<CollectionConfiguration>>(
+                type => _cache.GetPropertiesFor(type)
                     .Values
                     .Where(x => x.PropertyType.IsGenericEnumerable())
-                    .Select(x => ByAccessor[new SingleProperty(x)])
+                    .Select(x => _byAccessor[new SingleProperty(x)])
                     .ToList());
         }
 
@@ -35,23 +38,33 @@ namespace FubuObjectBlocks
         public CollectionConfiguration Register(Accessor accessor)
         {
             var configuration = new CollectionConfiguration(accessor);
-            ByAccessor[accessor] = configuration;
+            _byAccessor[accessor] = configuration;
             return configuration;
         }
 
         public ObjectBlockSettings Include(Type type)
         {
-            var collections = CollectionsFor[type];
+            var collections = _collectionsFor[type];
             return this;
         }
 
-        public string Collection(Type type, string key)
+        public void Ignore(Accessor accessor)
         {
-            var map = CollectionsFor[type].SingleOrDefault(x => x.Accessor.Name.EqualsIgnoreCase(key));
+            Ignore(new ExplicitIgnorePolicy(accessor));
+        }
+
+        public void Ignore(IIgnoreAccessorPolicy policy)
+        {
+            _ignored.Add(policy);
+        }
+
+        string IObjectBlockSettings.Collection(Type type, string key)
+        {
+            var map = _collectionsFor[type].SingleOrDefault(x => x.Accessor.Name.EqualsIgnoreCase(key));
             return map != null ? map.Name : key;
         }
 
-        public Accessor ImplicitValue(Type type, string key)
+        Accessor IObjectBlockSettings.ImplicitValue(Type type, string key)
         {
             return ImplicitFor(type, x => x.Implicit.Name.EqualsIgnoreCase(key));
         }
@@ -71,27 +84,35 @@ namespace FubuObjectBlocks
 
         public IEnumerable<CollectionConfiguration> Implicits()
         {
-            return CollectionsFor.GetAllKeys()
-                .SelectMany(x => CollectionsFor[x])
+            return _collectionsFor.GetAllKeys()
+                .SelectMany(x => _collectionsFor[x])
                 .Where(x => x.Implicit != null);
         }
 
-        public IEnumerable<string> KnownCollectionNames()
+        IEnumerable<string> IObjectBlockSettings.KnownCollectionNames()
         {
-            return CollectionsFor.GetAllKeys()
-                .SelectMany(x => CollectionsFor[x])
+            return _collectionsFor.GetAllKeys()
+                .SelectMany(x => _collectionsFor[x])
                 .Select(x => x.Name)
                 .Distinct();
         }
 
-        public Accessor FindImplicitValue(Type type)
+        bool IObjectBlockSettings.ShouldIgnore(object target, Accessor accessor)
+        {
+            var policies = _ignored.Where(x => x.Matches(accessor)).ToList();
+            if (!policies.Any()) return false;
+
+            return policies.Any(x => x.Ignore(target, accessor));
+        }
+
+        Accessor IObjectBlockSettings.FindImplicitValue(Type type)
         {
             return ImplicitFor(type);
         }
 
-        public Type FindCollectionType(Type type, string key)
+        Type IObjectBlockSettings.FindCollectionType(Type type, string key)
         {
-            var collectionMap = CollectionsFor[type].SingleOrDefault(x => x.Name.EqualsIgnoreCase(key));
+            var collectionMap = _collectionsFor[type].SingleOrDefault(x => x.Name.EqualsIgnoreCase(key));
             if (collectionMap == null)
             {
                 throw new InvalidOperationException("Could not find property: " + key);
@@ -107,6 +128,16 @@ namespace FubuObjectBlocks
         {
             var config = Register(ReflectionHelper.GetAccessor(expression));
             return new ConfigureCollectionExpression<TTarget>(config);
+        }
+
+        public IgnorePropertyExpression<TTarget> Ignore<TTarget>(Expression<Func<T, TTarget>> expression)
+        {
+            var accessor = ReflectionHelper.GetAccessor(expression);
+            var policy = new ConfiguredIgnorePolicy<TTarget>(accessor);
+
+            Ignore(policy);
+
+            return new IgnorePropertyExpression<TTarget>(policy);
         }
 
         public class ConfigureCollectionExpression<TTarget>
@@ -128,6 +159,21 @@ namespace FubuObjectBlocks
             {
                 _configuration.Implicit = expression.ToAccessor();
                 return this;
+            }
+        }
+
+        public class IgnorePropertyExpression<TTarget>
+        {
+            private readonly ConfiguredIgnorePolicy<TTarget> _policy;
+
+            public IgnorePropertyExpression(ConfiguredIgnorePolicy<TTarget> policy)
+            {
+                _policy = policy;
+            }
+
+            public void When(Predicate<TTarget> predicate)
+            {
+                _policy.Predicate = predicate;
             }
         }
     }

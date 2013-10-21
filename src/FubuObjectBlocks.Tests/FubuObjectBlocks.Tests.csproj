@@ -69,6 +69,7 @@
     <Compile Include="block_for_object_with_collections.cs" />
     <Compile Include="block_for_object_with_nested_types.cs" />
     <Compile Include="block_for_simple_object.cs" />
+    <Compile Include="ExplicitIgnorePolicyTester.cs" />
     <Compile Include="Formatting\BlockRegistryTester.cs" />
     <Compile Include="Formatting\DefaultBlockNamingStrategyTester.cs" />
     <Compile Include="Formatting\EmptyBlockNamingStrategyTester.cs" />

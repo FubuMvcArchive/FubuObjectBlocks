@@ -52,10 +52,12 @@ namespace FubuObjectBlocks
                 : null;
 
             var properties = _cache.GetPropertiesFor(type).Values;
+            var settings = _blocks.SettingsFor(type);
 
             return new ObjectBlock
             {
                 Blocks = properties
+                    .Where(x => !settings.ShouldIgnore(input, new SingleProperty(x)))
                     .Where(x => x.GetValue(input, null) != null && !isImplicitValue(x, implicitAccessor))
                     .Select(x =>
                     {

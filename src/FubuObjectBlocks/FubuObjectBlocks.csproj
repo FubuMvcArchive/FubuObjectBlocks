@@ -52,6 +52,7 @@
     <Compile Include="CollectionConfiguration.cs" />
     <Compile Include="CollectionBlock.cs" />
     <Compile Include="Formatting\IBlockSorter.cs" />
+    <Compile Include="IIgnoreAccessorPolicy.cs" />
     <Compile Include="Settings\IObjectBlockSource.cs" />
     <Compile Include="Settings\ObjectBlockCollection.cs" />
     <Compile Include="Settings\ObjectBlockFileSettings.cs" />

@@ -178,6 +178,11 @@ namespace FubuObjectBlocks.Tests
             {
                 yield return "feed";
             }
+
+            public bool ShouldIgnore(object target, Accessor accessor)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

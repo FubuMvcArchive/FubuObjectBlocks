@@ -13,5 +13,7 @@ namespace FubuObjectBlocks
 
         Type FindCollectionType(Type type, string key);
         IEnumerable<string> KnownCollectionNames();
+
+        bool ShouldIgnore(object target, Accessor accessor);
     }
 }
