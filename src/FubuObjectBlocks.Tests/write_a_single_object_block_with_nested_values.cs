@@ -19,7 +19,7 @@ namespace FubuObjectBlocks.Tests
 
             block.AddBlock(nested);
 
-            block.ToString().ShouldEqual("prop1: 'val1'{0}nestedObject:{0}  nestedProp1: 'val2'".ToFormat(Environment.NewLine));
+            block.ToString().ShouldEqual("prop1: 'val1'{0}nestedObject:{0}  nestedProp1: 'val2'{0}".ToFormat(Environment.NewLine));
         }
     }
 }

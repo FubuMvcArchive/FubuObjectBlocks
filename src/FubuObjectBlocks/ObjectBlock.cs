@@ -114,7 +114,7 @@ namespace FubuObjectBlocks
         {
             var hasName = Name.IsNotEmpty();
             var objectTitle = hasName
-                ? new[] {BlockIndenter.Indent("{0}:".ToFormat(Name), indent)}
+                ? new[] {BlockIndenter.Indent("{0}:{1}".ToFormat(Name, Environment.NewLine), indent)}
                 : new string[] {};
             var nextIndentAmount = hasName ? indent + 1 : indent;
 
