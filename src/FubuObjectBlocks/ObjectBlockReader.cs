@@ -46,6 +46,7 @@ namespace FubuObjectBlocks
         public object Read(Type type, ObjectBlock block)
         {
             var settings = _blocks.SettingsFor(type);
+            block.MakeCollections(settings);
             var result = _resolver.BindModel(type, new ObjectBlockValues(block, settings, type));
 
             return result.Value;
